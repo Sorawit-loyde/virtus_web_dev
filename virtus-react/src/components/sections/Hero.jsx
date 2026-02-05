@@ -93,29 +93,7 @@ export const Hero = () => {
                             <Text en="Our Expertise" th="ความเชี่ยวชาญของเรา" />
                         </Link>
                     </div>
-
-                    {/* Quick Stats Overlay (Mobile Hidden) */}
-                    <div className="mt-16 hidden lg:grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
-                        <div>
-                            <div className="text-2xl font-bold text-white">25+</div>
-                            <div className="text-slate-400 text-sm"><Text en="Years Experience" th="ปีของประสบการณ์" /></div>
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-white">10k+</div>
-                            <div className="text-slate-400 text-sm"><Text en="Skus in Stock" th="รายการสินค้า" /></div>
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-white">100%</div>
-                            <div className="text-slate-400 text-sm"><Text en="Genuine Parts" th="อะไหล่แท้แน่นอน" /></div>
-                        </div>
-                    </div>
                 </div>
-            </div>
-
-            {/* Scroll Indicator */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 z-30">
-                <div className="w-px h-12 bg-gradient-to-b from-white to-transparent"></div>
-                <span className="text-[10px] text-white uppercase tracking-[0.3em] font-medium"><Text en="Scroll" th="เลื่อนลง" /></span>
             </div>
         </section>
     );
