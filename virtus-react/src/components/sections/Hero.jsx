@@ -1,48 +1,121 @@
-import { ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Text } from '../common/Text';
 
+const backgroundImages = [
+    '/assets/background_loop/Banner-Craft-Bearings-2.jpg',
+    '/assets/background_loop/Covergif.gif',
+    '/assets/background_loop/gifFB180213.gif',
+    '/assets/background_loop/gifMPZ.gif',
+    '/assets/background_loop/gifPneumatics.gif',
+    '/assets/background_loop/hepyc.gif',
+    '/assets/background_loop/motorbase.gif'
+];
+
 export const Hero = () => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        setIsVisible(true);
+        const interval = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % backgroundImages.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
     return (
-        <section id="home" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-            <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-brand-900/80 z-10" />
-                <img
-                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2670"
-                    alt="Industrial Background"
-                    className="w-full h-full object-cover"
-                />
+        <section id="home" className="relative min-h-[700px] lg:min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
+            {/* Background Slideshow Container */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center pt-[90px] pb-[10px]">
+                {/* Modern Layered Overlays */}
+                <div className="absolute inset-0 bg-slate-950/40 z-20 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent z-20 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 z-20 pointer-events-none" />
+
+                <div className="relative w-full h-full flex items-center justify-center">
+                    {backgroundImages.map((img, index) => (
+                        <div
+                            key={img}
+                            className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out ${index === currentIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+                                }`}
+                        >
+                            <img
+                                src={img}
+                                alt={`Industrial ${index + 1}`}
+                                className="w-full h-full object-cover lg:object-contain"
+                            />
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
-                <div className="lg:w-2/3">
-                    <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white tracking-tight mb-8 leading-tight">
-                        <span className="block"><Text en="Industrial Components" th="ชิ้นส่วนอุตสาหกรรม" /></span>
-                        <span className="text-white block">
-                            <Text en="Expertise & Quality" th="คุณภาพและความเชี่ยวชาญ" />
+            <div className={`relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <div className="max-w-3xl">
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-2 bg-brand-500/10 backdrop-blur-md border border-brand-500/20 px-4 py-2 rounded-full mb-8">
+                        <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(14,165,233,0.5)]"></span>
+                        <span className="text-brand-400 text-sm font-bold tracking-wider uppercase">
+                            <Text en="Premium Industrial Solutions" th="โซลูชั่นอุตสาหกรรมระดับพรีเมียม" />
+                        </span>
+                    </div>
+
+                    <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter mb-6 leading-[0.9] drop-shadow-2xl">
+                        VIRTUS <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-600">
+                            <Text en="Company" th="คัมพานี" />
                         </span>
                     </h1>
-                    <p className="text-lg sm:text-xl text-white mb-10 max-w-2xl leading-relaxed">
-                        <Text
-                            en="Leading importer and stockist of genuine tools and components in Southeast Asia. We provide deep technical understanding and professional service."
-                            th="ผู้นำเข้าและจัดจำหน่ายเครื่องมือและชิ้นส่วนอุตสาหกรรมแท้ชั้นนำในเอเชียตะวันออกเฉียงใต้ เราให้บริการด้วยความเข้าใจทางเทคนิคอย่างลึกซึ้ง"
-                        />
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <a
-                            href="/products"
-                            className="bg-white text-brand-900 px-8 py-4 rounded-full font-bold hover:bg-brand-50 transition-colors shadow-xl flex items-center justify-center gap-2"
+
+                    <div className="relative mb-10">
+                        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-500 to-transparent rounded-full shadow-[0_0_15px_rgba(14,165,233,0.3)]"></div>
+                        <h2 className="text-slate-200 text-xl sm:text-2xl font-medium max-w-2xl leading-relaxed pl-4">
+                            <Text
+                                en="Importer & Stockist of Genuine Industrial Tools & Components with deep technical expertise."
+                                th="ผู้นำเข้าและผู้จัดจำหน่ายเครื่องมืออุตสาหกรรมของแท้ พร้อมทีมงานผู้เชี่ยวชาญทางเทคนิค"
+                            />
+                        </h2>
+                    </div>
+
+                    <div className="flex flex-wrap gap-5">
+                        <Link
+                            to="/products"
+                            className="group bg-brand-600 hover:bg-brand-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-xl shadow-brand-900/20 flex items-center gap-3 cursor-pointer hover:-translate-y-1"
                         >
-                            <Text en="Explore Products" th="ดูสินค้าทั้งหมด" />
-                            <ArrowRight className="w-5 h-5" />
-                        </a>
-                        <a
-                            href="/contact"
-                            className="bg-transparent border-2 border-slate-300 text-white px-8 py-4 rounded-full font-bold hover:bg-white/10 transition-colors flex items-center justify-center"
+                            <Text en="View Catalog" th="ดูรายการสินค้า" />
+                            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                        <Link
+                            to="/about"
+                            className="bg-white/5 backdrop-blur-md border border-white/10 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-all flex items-center gap-2 cursor-pointer"
                         >
-                            <Text en="Contact Sales" th="ติดต่อฝ่ายขาย" />
-                        </a>
+                            <Text en="Our Expertise" th="ความเชี่ยวชาญของเรา" />
+                        </Link>
+                    </div>
+
+                    {/* Quick Stats Overlay (Mobile Hidden) */}
+                    <div className="mt-16 hidden lg:grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
+                        <div>
+                            <div className="text-2xl font-bold text-white">25+</div>
+                            <div className="text-slate-400 text-sm"><Text en="Years Experience" th="ปีของประสบการณ์" /></div>
+                        </div>
+                        <div>
+                            <div className="text-2xl font-bold text-white">10k+</div>
+                            <div className="text-slate-400 text-sm"><Text en="Skus in Stock" th="รายการสินค้า" /></div>
+                        </div>
+                        <div>
+                            <div className="text-2xl font-bold text-white">100%</div>
+                            <div className="text-slate-400 text-sm"><Text en="Genuine Parts" th="อะไหล่แท้แน่นอน" /></div>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 z-30">
+                <div className="w-px h-12 bg-gradient-to-b from-white to-transparent"></div>
+                <span className="text-[10px] text-white uppercase tracking-[0.3em] font-medium"><Text en="Scroll" th="เลื่อนลง" /></span>
             </div>
         </section>
     );

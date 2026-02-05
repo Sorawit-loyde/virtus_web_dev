@@ -1,18 +1,15 @@
 import { Hero } from '../components/sections/Hero';
-import { About } from '../components/sections/About';
-import { Products } from '../components/sections/Products';
 import { Stats } from '../components/sections/Stats';
-import { Contact } from '../components/sections/Contact';
+import { ProductSlideshow } from '../components/sections/ProductSlideshow';
+import { Partners } from '../components/sections/Partners';
 
 export const Home = () => {
     return (
         <>
             <Hero />
-            {/* Partners banner can be added here */}
-            <About />
-            <Products />
+            <ProductSlideshow />
             <Stats />
-            <Contact />
+            <Partners />
         </>
     );
 };
