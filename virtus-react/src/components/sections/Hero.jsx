@@ -29,10 +29,8 @@ export const Hero = () => {
         <section id="home" className="relative min-h-[700px] lg:min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
             {/* Background Slideshow Container */}
             <div className="absolute inset-0 z-0 flex items-center justify-center pt-[90px] pb-[10px]">
-                {/* Modern Layered Overlays */}
-                <div className="absolute inset-0 bg-slate-950/40 z-20 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent z-20 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 z-20 pointer-events-none" />
+                {/* Consistent Uniform Overlay */}
+                <div className="absolute inset-0 bg-slate-950/60 z-20 pointer-events-none" />
 
                 <div className="relative w-full h-full flex items-center justify-center">
                     {backgroundImages.map((img, index) => (
@@ -53,15 +51,7 @@ export const Hero = () => {
 
             <div className={`relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                 <div className="max-w-3xl">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-brand-500/10 backdrop-blur-md border border-brand-500/20 px-4 py-2 rounded-full mb-8">
-                        <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(14,165,233,0.5)]"></span>
-                        <span className="text-brand-400 text-sm font-bold tracking-wider uppercase">
-                            <Text en="Premium Industrial Solutions" th="โซลูชั่นอุตสาหกรรมระดับพรีเมียม" />
-                        </span>
-                    </div>
-
-                    <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter mb-6 leading-[0.9] drop-shadow-2xl">
+                    <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter mb-6 leading-[1.1] drop-shadow-2xl">
                         VIRTUS <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-600">
                             <Text en="Company" th="คัมพานี" />

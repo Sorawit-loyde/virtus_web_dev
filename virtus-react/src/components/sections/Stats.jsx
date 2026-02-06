@@ -48,7 +48,7 @@ export const Stats = () => {
                             <div className="text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight">
                                 {stat.value}
                             </div>
-                            <div className="text-slate-400 font-medium text-sm lg:text-base tracking-wide max-w-[150px]">
+                            <div className="text-slate-400 font-medium text-sm lg:text-base tracking-wide whitespace-nowrap">
                                 <Text en={stat.en} th={stat.th} />
                             </div>
                         </div>

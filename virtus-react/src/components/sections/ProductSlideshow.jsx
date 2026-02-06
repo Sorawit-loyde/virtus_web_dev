@@ -61,10 +61,10 @@ export const ProductSlideshow = () => {
                             <div
                                 key={img}
                                 className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] ${index === currentIndex
-                                        ? 'opacity-100 translate-x-0 scale-100'
-                                        : index < currentIndex
-                                            ? 'opacity-0 -translate-x-12 scale-95'
-                                            : 'opacity-0 translate-x-12 scale-95'
+                                    ? 'opacity-100 translate-x-0 scale-100'
+                                    : index < currentIndex
+                                        ? 'opacity-0 -translate-x-12 scale-95'
+                                        : 'opacity-0 translate-x-12 scale-95'
                                     }`}
                             >
                                 <img
@@ -72,10 +72,7 @@ export const ProductSlideshow = () => {
                                     alt={`Product ${index + 1}`}
                                     className="w-full h-full object-contain p-4 md:p-8"
                                 />
-                                {/* Image Overlay Label */}
-                                <div className="absolute bottom-8 right-8 bg-slate-900/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-slate-600 text-xs font-bold uppercase tracking-widest hidden md:block">
-                                    Slide {index + 1} / {slideImages.length}
-                                </div>
+
                             </div>
                         ))}
                     </div>
@@ -87,8 +84,8 @@ export const ProductSlideshow = () => {
                                 key={index}
                                 onClick={() => setCurrentIndex(index)}
                                 className={`h-1.5 transition-all duration-500 rounded-full cursor-pointer ${index === currentIndex
-                                        ? 'bg-brand-600 w-12'
-                                        : 'bg-slate-300 w-3 hover:bg-slate-400'
+                                    ? 'bg-brand-600 w-12'
+                                    : 'bg-slate-300 w-3 hover:bg-slate-400'
                                     }`}
                             />
                         ))}

@@ -36,9 +36,7 @@ export const Partners = () => {
                             <h3 className="text-2xl font-bold text-slate-800">
                                 <Text en="Our Valued Customers" th="กลุ่มลูกค้าที่ไว้วางใจเรา" />
                             </h3>
-                            <div className="text-brand-600 font-bold text-sm tracking-widest uppercase border border-brand-100 bg-brand-50/50 px-3 py-1 rounded-lg">
-                                <Text en="Domestic" th="ภายในประเทศ" />
-                            </div>
+
                         </div>
                         <div className="relative aspect-[16/7] overflow-hidden rounded-3xl bg-white border border-slate-200 hover:border-brand-300 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-brand-900/10 hover:-translate-y-2">
                             <div className="absolute inset-0 flex items-center justify-center p-6 md:p-8">
@@ -58,9 +56,7 @@ export const Partners = () => {
                             <h3 className="text-2xl font-bold text-slate-800">
                                 <Text en="Authorized Brands & Partners" th="แบรนด์และพันธมิตรระดับโลก" />
                             </h3>
-                            <div className="text-brand-600 font-bold text-sm tracking-widest uppercase border border-brand-100 bg-brand-50/50 px-3 py-1 rounded-lg">
-                                <Text en="International" th="ต่างประเทศ" />
-                            </div>
+
                         </div>
                         <div className="relative aspect-[16/7] overflow-hidden rounded-3xl bg-white border border-slate-200 hover:border-brand-300 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-brand-900/10 hover:-translate-y-2">
                             <div className="absolute inset-0 flex items-center justify-center p-6 md:p-8">
@@ -77,7 +73,6 @@ export const Partners = () => {
 
                 {/* Footer Quote */}
                 <div className="mt-24 flex flex-col items-center">
-                    <div className="w-16 h-1.5 bg-gradient-to-r from-brand-400 to-brand-600 rounded-full mb-8 shadow-sm shadow-brand-500/20"></div>
                     <div className="flex items-center gap-3 text-brand-800 font-bold text-lg md:text-xl">
                         <div className="p-2 rounded-lg bg-brand-50 border border-brand-100">
                             <ShieldCheck className="w-6 h-6 text-brand-600" />
