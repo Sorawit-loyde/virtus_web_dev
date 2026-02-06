@@ -10,18 +10,18 @@ export const Partners = () => {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center max-w-3xl mx-auto mb-20">
+                <div className="text-center max-w-4xl mx-auto mb-20">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-sm font-bold uppercase tracking-widest mb-6 border border-brand-100">
                         <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                         <Text en="Track Record of Excellence" th="ผลงานแห่งความภาคภูมิใจ" />
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">
+                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight lg:whitespace-nowrap">
                         <Text
                             en="Trusted by Industry Leaders"
                             th="ได้รับความไว้วางใจจากผู้นำอุตสาหกรรม"
                         />
                     </h2>
-                    <p className="text-slate-600 text-lg md:text-xl leading-relaxed">
+                    <p className="text-slate-600 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
                         <Text
                             en="We collaborate with world-class manufacturers to provide the highest quality components to thousands of businesses across Thailand."
                             th="เราทำงานร่วมกับผู้ผลิตระดับโลกเพื่อส่งมอบชิ้นส่วนคุณภาพสูงสุดให้กับธุรกิจมากมายทั่วประเทศไทย"
