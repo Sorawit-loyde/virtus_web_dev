@@ -13,6 +13,7 @@
   --color-brand-900: #0c4a6e;
 
   --font-sans: "Inter", "Sarabun", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-thai: "Sarabun", sans-serif;
 }
 
 @layer base {
