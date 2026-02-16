@@ -92,6 +92,79 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// --- Admin Specific Routes ---
+
+// Add Category
+app.post('/api/categories', async (req, res) => {
+    const { id, enTitle, thTitle, imageUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO categories (id, en_title, th_title, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
+            [id, enTitle, thTitle, imageUrl]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to add category' });
+    }
+});
+
+// Update Category
+app.put('/api/categories/:id', async (req, res) => {
+    const { id } = req.params;
+    const { enTitle, thTitle, imageUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'UPDATE categories SET en_title = $1, th_title = $2, image_url = $3 WHERE id = $4 RETURNING *',
+            [enTitle, thTitle, imageUrl, id]
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to update category' });
+    }
+});
+
+// Delete Category
+app.delete('/api/categories/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM products WHERE category_id = $1', [id]); // Delete related products first
+        await pool.query('DELETE FROM categories WHERE id = $1', [id]);
+        res.json({ message: 'Category deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to delete category' });
+    }
+});
+
+// Add Product
+app.post('/api/products', async (req, res) => {
+    const { categoryId, enName, thName, spec } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO products (category_id, en_name, th_name, spec) VALUES ($1, $2, $3, $4) RETURNING *',
+            [categoryId, enName, thName, spec]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to add product' });
+    }
+});
+
+// Delete Product
+app.delete('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM products WHERE id = $1', [id]);
+        res.json({ message: 'Product deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to delete product' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
