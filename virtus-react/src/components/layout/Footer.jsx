@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Text } from '../common/Text';
 import { Facebook } from 'lucide-react';
 
 export const Footer = () => {
@@ -19,19 +18,25 @@ export const Footer = () => {
                         </p>
                     </div>
 
-                    {/* Column 2: Quick Links (Fixed Thai) */}
+                    {/* Column 2: Quick Links */}
                     <div className="flex flex-col gap-4">
                         <ul className="space-y-1.5">
                             <li>
                                 <Link to="/" className="flex items-center gap-2 hover:text-brand-400 transition-all group">
                                     <span className="w-1.5 h-1.5 rounded-full bg-brand-500/40 group-hover:bg-brand-500 transition-all"></span>
-                                    Vertus
+                                    Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/about" className="flex items-center gap-2 hover:text-brand-400 transition-all group">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-500/40 group-hover:bg-brand-500 transition-all"></span>
+                                    About Us
                                 </Link>
                             </li>
                             <li>
                                 <Link to="/products" className="flex items-center gap-2 hover:text-brand-400 transition-all group">
                                     <span className="w-1.5 h-1.5 rounded-full bg-brand-500/40 group-hover:bg-brand-500 transition-all"></span>
-                                    Product
+                                    Products
                                 </Link>
                             </li>
                             <li>
@@ -49,7 +54,7 @@ export const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Column 3: Contact & Branches (Fixed English) */}
+                    {/* Column 3: Contact & Branches */}
                     <div className="flex flex-col gap-4 text-sm">
                         <h4 className="text-white font-bold text-lg mb-2">Our Branches</h4>
                         <div className="space-y-2">
@@ -87,10 +92,10 @@ export const Footer = () => {
                             <Facebook className="w-5 h-5 text-[#1877F2]" />
                             Follow Us
                         </h4>
-                        <div className="rounded-xl overflow-hidden bg-white h-[340px] w-full shadow-2xl border border-white/10 group-hover:border-brand-500/30 transition-all max-w-[340px]">
+                        <div className="rounded-xl overflow-hidden bg-white p-1 h-[400px] shadow-xl border border-white/10 transition-all">
                             {/* Facebook Page Plugin Iframe */}
                             <iframe
-                                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FVirtusThailand%2F&tabs=timeline&width=340&height=340&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+                                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FVirtusThailand&tabs=timeline&width=300&height=400&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 'none', overflow: 'hidden' }}

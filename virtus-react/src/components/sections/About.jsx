@@ -1,58 +1,55 @@
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Factory, Link } from 'lucide-react';
 import { Text } from '../common/Text';
 
 export const About = () => {
     return (
-        <section id="about" className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <div className="inline-block bg-brand-50 text-brand-700 px-4 py-2 rounded-full font-bold text-sm mb-6">
-                            <Text en="Since 1997" th="ก่อตั้งเมื่อ 1997" />
-                        </div>
-                        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                            <Text
-                                en="Deep Technical Understanding & Professional Service"
-                                th="ความรู้ทางเทคนิคเชิงลึกและบริการระดับมืออาชีพ"
-                            />
-                        </h2>
-                        <p className="text-slate-600 text-lg mb-6 leading-relaxed">
-                            <Text
-                                en="Operating with a professional team with deep technical knowledge."
-                                th="ดำเนินธุรกิจด้วยทีมงานมืออาชีพที่ศึกษาและมีความรู้ความเข้าใจทางเทคนิคอย่างลึกซึ้ง"
-                            />
-                        </p>
-                        <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-                            <Text
-                                en="VIRTUS has established itself as a reliable partner for industrial sectors across Thailand and Southeast Asia. We don't just sell parts; we understand the engineering behind them."
-                                th="VIRTUS ได้สร้างชื่อเสียงในฐานะพันธมิตรที่เชื่อถือได้สำหรับภาคอุตสาหกรรมทั่วไทยและเอเชียตะวันออกเฉียงใต้ เราไม่ได้แค่ขายชิ้นส่วน แต่เราเข้าใจวิศวกรรมเบื้องหลัง"
-                            />
-                        </p>
-
-                        <ul className="space-y-4">
-                            {[
-                                { en: 'Genuine Parts Guarantee', th: 'รับประกันอะไหล่แท้' },
-                                { en: 'Large Inventory in Bangkok', th: 'คลังสินค้าขนาดใหญ่ในกรุงเทพฯ' },
-                                { en: 'Expert Technical Support', th: 'การสนับสนุนทางเทคนิคจากผู้เชี่ยวชาญ' },
-                            ].map((item, idx) => (
-                                <li key={idx} className="flex items-center gap-3">
-                                    <CheckCircle2 className="w-6 h-6 text-brand-600" />
-                                    <span className="text-slate-700 font-medium">
-                                        <Text en={item.en} th={item.th} />
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
+        <section id="about" className="py-24 bg-white overflow-hidden relative">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="max-w-3xl">
+                    <div className="inline-block bg-brand-50 text-brand-700 px-4 py-2 rounded-full font-bold text-sm mb-6">
+                        <Text en="About Virtus" th="เกี่ยวกับเวอร์ทัส" />
                     </div>
-                    <div className="relative">
-                        <div className="absolute -inset-4 bg-brand-100 rounded-2xl transform rotate-3" />
-                        <img
-                            src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1000"
-                            alt="Engineers meeting"
-                            className="relative rounded-2xl shadow-2xl w-full"
+                    <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-8 leading-tight">
+                        <Text
+                            en="Regional Excellence in Engineering Components"
+                            th="ความเป็นเลิศด้านชิ้นส่วนวิศวกรรมในระดับภูมิภาค"
                         />
+                    </h2>
+                    <p className="text-slate-600 text-lg mb-8 leading-relaxed italic border-l-4 border-brand-500 pl-6">
+                        <Text
+                            en="A leading regional manufacturer and distributor, maintaining industry leadership through genuine added value and comprehensive inventory."
+                            th="ผู้ผลิตและจัดจำหน่ายชั้นนำ รักษาความเป็นผู้นำด้วยการสร้างมูลค่าเพิ่มและสำรองสินค้าอย่างครบถ้วนที่สุด"
+                        />
+                    </p>
+
+                    <div className="grid sm:grid-cols-2 gap-x-12 gap-y-6 mb-12">
+                        {[
+                            { en: 'Authentic International Standards', th: 'มาตรฐานสากลของแท้' },
+                            { en: 'Largest Regional Inventory', th: 'คลังสินค้าที่ใหญ่ที่สุดในภูมิภาค' },
+                            { en: 'Advanced Technical Support', th: 'การสนับสนุนทางเทคนิคขั้นสูง' },
+                            { en: 'Professional Field Experience', th: 'ประสบการณ์ตรงจากภาคสนาม' },
+                        ].map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-3">
+                                <CheckCircle2 className="w-5 h-5 text-brand-600 flex-shrink-0" />
+                                <span className="text-slate-700 font-medium">
+                                    <Text en={item.en} th={item.th} />
+                                </span>
+                            </div>
+                        ))}
                     </div>
+
+                    <a
+                        href="/about"
+                        className="inline-flex items-center justify-center bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-brand-700 transition-all shadow-lg hover:shadow-brand-500/20"
+                    >
+                        <Text en="Full Company Profile" th="รายละเอียดบริษัท" />
+                    </a>
                 </div>
+            </div>
+
+            {/* Minimalist Background Decoration (No real images) */}
+            <div className="absolute top-1/2 -right-20 -translate-y-1/2 opacity-[0.03] pointer-events-none">
+                <Factory className="w-[600px] h-[600px] -rotate-12" />
             </div>
         </section>
     );
