@@ -1,11 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Package, FolderOpen, ExternalLink, RefreshCw } from 'lucide-react';
-import { getCategories, deleteCategory } from '../services/api';
+import { Plus, Edit2, Trash2, Package, FolderOpen, ExternalLink, RefreshCw, X, Image as ImageIcon, Upload } from 'lucide-react';
+import { getCategories, deleteCategory, addCategory, uploadImage } from '../services/api';
 
 const Dashboard = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isAdding, setIsAdding] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [formData, setFormData] = useState({
+        id: '',
+        enTitle: '',
+        thTitle: '',
+        imageUrl: ''
+    });
+
+    const fileInputRef = useRef(null);
 
     const fetchCategories = async () => {
         setLoading(true);
@@ -34,8 +44,36 @@ const Dashboard = () => {
         }
     };
 
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const { data } = await uploadImage(file);
+            setFormData(prev => ({ ...prev, imageUrl: data.imageUrl }));
+        } catch (err) {
+            console.error('Upload failed:', err);
+            alert('Image upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleAdd = async (e) => {
+        e.preventDefault();
+        try {
+            await addCategory(formData);
+            setIsAdding(false);
+            setFormData({ id: '', enTitle: '', thTitle: '', imageUrl: '' });
+            fetchCategories();
+        } catch (err) {
+            alert('Failed to add category. Check if ID is unique.');
+        }
+    };
+
     return (
-        <div className="p-8">
+        <div className="p-8 max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900">Virtus Admin Panel</h1>
@@ -49,12 +87,114 @@ const Dashboard = () => {
                     >
                         <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
                     </button>
-                    <button className="bg-brand-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-brand-700 transition-all shadow-sm">
+                    <button
+                        onClick={() => setIsAdding(true)}
+                        className="bg-brand-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-brand-700 transition-all shadow-sm"
+                    >
                         <Plus className="w-5 h-5" />
                         Add Category
                     </button>
                 </div>
             </div>
+
+            {/* Modal for Adding Category */}
+            {isAdding && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in duration-200">
+                        <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                            <h2 className="text-xl font-bold text-slate-900">Create New Category</h2>
+                            <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-600">
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleAdd} className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tight text-[10px]">ID (Slug - e.g. bearings)</label>
+                                <input
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-500 transition-all outline-none"
+                                    value={formData.id}
+                                    onChange={e => setFormData({ ...formData, id: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+                                    placeholder="bearings"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tight text-[10px]">English Title</label>
+                                <input
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-500 transition-all outline-none"
+                                    value={formData.enTitle}
+                                    onChange={e => setFormData({ ...formData, enTitle: e.target.value })}
+                                    placeholder="Bearings (Original)"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tight text-[10px]">Thai Title</label>
+                                <input
+                                    required
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-500 transition-all outline-none"
+                                    value={formData.thTitle}
+                                    onChange={e => setFormData({ ...formData, thTitle: e.target.value })}
+                                    placeholder="ตลับลูกปืน ของแท้"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tight text-[10px]">Image</label>
+                                <div className="flex gap-4 items-center">
+                                    <div
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="w-24 h-24 bg-slate-100 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50 cursor-pointer overflow-hidden transition-all group"
+                                    >
+                                        {formData.imageUrl ? (
+                                            <img src={formData.imageUrl} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <>
+                                                <Upload className={`w-6 h-6 ${uploading ? 'animate-bounce text-brand-600' : 'text-slate-400'}`} />
+                                                <span className="text-[10px] text-slate-400 font-bold uppercase mt-1">Upload</span>
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="flex-grow space-y-2">
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                            accept="image/*"
+                                        />
+                                        <p className="text-[10px] text-slate-400 leading-tight">
+                                            Upload a local image file. It will be saved permanently to the backend.
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="text-xs font-bold text-brand-600 hover:underline"
+                                        >
+                                            {formData.imageUrl ? 'Change Image' : 'Select File'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="pt-4 flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAdding(false)}
+                                    className="flex-grow px-4 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={uploading}
+                                    className="flex-grow bg-brand-600 text-white px-4 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all shadow-md disabled:bg-slate-300"
+                                >
+                                    {uploading ? 'Uploading...' : 'Save Category'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {categories.map((cat) => (
@@ -78,8 +218,8 @@ const Dashboard = () => {
                             </div>
                         </div>
                         <div className="p-5">
-                            <h3 className="font-bold text-slate-900 mb-1">{cat.enTitle}</h3>
-                            <p className="text-sm text-slate-500 mb-4">{cat.thTitle}</p>
+                            <h3 className="font-bold text-slate-900 mb-1 leading-tight h-10 flex items-center">{cat.enTitle}</h3>
+                            <p className="text-sm text-slate-500 mb-4 truncate">{cat.thTitle}</p>
 
                             <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                                 <Link

@@ -1,18 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Package, Tag, Layers } from 'lucide-react';
-import { getProductsByCategory, addProduct, deleteProduct } from '../services/api';
+import { ArrowLeft, Plus, Trash2, Package, Tag, Layers, ImageIcon, X, Upload } from 'lucide-react';
+import { getProductsByCategory, addProduct, deleteProduct, uploadImage } from '../services/api';
 
 const CategoryDetail = () => {
     const { id } = useParams();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [newProduct, setNewProduct] = useState({
         enName: '',
         thName: '',
-        spec: ''
+        spec: '',
+        imageUrl: ''
     });
+
+    const fileInputRef = useRef(null);
 
     const fetchData = async () => {
         setLoading(true);
@@ -30,15 +34,33 @@ const CategoryDetail = () => {
         fetchData();
     }, [id]);
 
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const { data } = await uploadImage(file);
+            setNewProduct(prev => ({ ...prev, imageUrl: data.imageUrl }));
+        } catch (err) {
+            console.error('Upload failed:', err);
+            alert('Image upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleAddProduct = async (e) => {
         e.preventDefault();
         try {
             await addProduct({ ...newProduct, categoryId: id });
-            setNewProduct({ enName: '', thName: '', spec: '' });
+            setNewProduct({ enName: '', thName: '', spec: '', imageUrl: '' });
             setIsAdding(false);
             fetchData();
         } catch (err) {
-            alert('Failed to add product');
+            console.error('ERROR details:', err.response?.data);
+            const errorMsg = err.response?.data?.detail || err.message;
+            alert(`Failed to add product: ${errorMsg}`);
         }
     };
 
@@ -79,8 +101,8 @@ const CategoryDetail = () => {
                     onClick={() => setIsAdding(!isAdding)}
                     className="bg-brand-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-brand-700 transition-all shadow-md self-end md:self-start"
                 >
-                    <Plus className="w-5 h-5" />
-                    New Product
+                    {isAdding ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                    {isAdding ? 'Cancel' : 'New Product'}
                 </button>
             </div>
 
@@ -111,7 +133,42 @@ const CategoryDetail = () => {
                                 placeholder="เช่น ตลับลูกปืนเม็ดกลม..."
                             />
                         </div>
-                        <div className="space-y-2 md:col-span-2">
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-slate-700 uppercase tracking-tight text-[11px]">Product Image</label>
+                            <div className="flex gap-4 items-center">
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="w-20 h-20 bg-white rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50 cursor-pointer overflow-hidden transition-all group flex-shrink-0"
+                                >
+                                    {newProduct.imageUrl ? (
+                                        <img src={newProduct.imageUrl} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <>
+                                            <Upload className={`w-5 h-5 ${uploading ? 'animate-bounce text-brand-600' : 'text-slate-400'}`} />
+                                            <span className="text-[8px] text-slate-400 font-bold uppercase mt-1">Upload</span>
+                                        </>
+                                    )}
+                                </div>
+                                <div className="flex-grow space-y-1">
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                        accept="image/*"
+                                    />
+                                    <p className="text-[10px] text-slate-400 leading-tight">Pick a local image file for this specific product.</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="text-xs font-bold text-brand-600 hover:underline"
+                                    >
+                                        {newProduct.imageUrl ? 'Change Image' : 'Select File'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
                             <label className="text-sm font-bold text-slate-700 uppercase tracking-tight">Specification / Detail</label>
                             <input
                                 className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
@@ -130,9 +187,10 @@ const CategoryDetail = () => {
                             </button>
                             <button
                                 type="submit"
-                                className="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-700 shadow-md transition-all"
+                                disabled={uploading}
+                                className="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-700 shadow-md transition-all disabled:bg-slate-300"
                             >
-                                Save Product
+                                {uploading ? 'Uploading...' : 'Save Product'}
                             </button>
                         </div>
                     </form>
@@ -153,11 +211,16 @@ const CategoryDetail = () => {
                 ) : (
                     <div className="grid grid-cols-1 gap-4">
                         {data.products.map(product => (
-                            <div key={product.id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center group hover:border-brand-100 transition-colors">
-                                <div>
-                                    <h4 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{product.enName}</h4>
-                                    <p className="text-sm text-slate-500">{product.thName}</p>
-                                    <p className="text-xs bg-slate-50 text-slate-500 inline-block px-2 py-1 rounded mt-2">{product.spec || 'No spec'}</p>
+                            <div key={product.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center group hover:border-brand-100 transition-colors">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-16 h-16 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
+                                        <img src={product.imageUrl} alt={product.enName} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{product.enName}</h4>
+                                        <p className="text-sm text-slate-500">{product.thName}</p>
+                                        <p className="text-[10px] bg-slate-50 text-slate-500 inline-block px-2 py-0.5 rounded mt-1">{product.spec || 'No spec'}</p>
+                                    </div>
                                 </div>
                                 <button
                                     onClick={() => handleDeleteProduct(product.id)}

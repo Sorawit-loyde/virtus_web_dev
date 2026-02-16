@@ -5,6 +5,7 @@ import { Footer } from './components/layout/Footer';
 import { Home } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
 import { ProductsPage } from './pages/ProductsPage';
+import { CategoryProductsPage } from './pages/CategoryProductsPage';
 import { ContactPage } from './pages/ContactPage';
 import { JoinUsPage } from './pages/JoinUsPage';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -21,6 +22,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<ProductsPage />} />
+                <Route path="/products/:categoryId" element={<CategoryProductsPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/join" element={<JoinUsPage />} />
                 <Route path="/contact" element={<ContactPage />} />

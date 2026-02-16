@@ -15,4 +15,14 @@ export const getProductsByCategory = (categoryId) => api.get(`/products/${catego
 export const addProduct = (data) => api.post('/products', data);
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
 
+export const uploadImage = (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return api.post('/upload', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+
 export default api;
