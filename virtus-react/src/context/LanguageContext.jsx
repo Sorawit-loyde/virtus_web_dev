@@ -12,10 +12,8 @@ export const LanguageProvider = ({ children }) => {
     useEffect(() => {
         if (lang === 'th') {
             document.body.classList.add('th');
-            document.body.style.fontFamily = "'Sarabun', sans-serif";
         } else {
             document.body.classList.remove('th');
-            document.body.style.fontFamily = "'Inter', sans-serif";
         }
     }, [lang]);
 

@@ -1,10 +1,33 @@
-import { Link } from 'react-router-dom';
-import { Globe, Menu, Layers } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Globe, Menu, X } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { Text } from '../common/Text';
 
 export const Navbar = () => {
+    const [isOpen, setIsOpen] = useState(false);
     const { toggleLanguage, lang } = useLanguage();
+    const location = useLocation();
+
+    // Close mobile menu on navigation
+    useEffect(() => {
+        setIsOpen(false);
+    }, [location]);
+
+    const navLinks = [
+        { path: '/', en: 'Home', th: 'หน้าแรก' },
+        { path: '/products', en: 'Product', th: 'สินค้า' },
+        { path: '/about', en: 'About Us', th: 'เกี่ยวกับเรา' },
+        { path: '/join', en: 'Join Us', th: 'ร่วมงานกับเรา' },
+        { path: '/contact', en: 'Contact Us', th: 'ติดต่อเรา' },
+    ];
+
+    const isActive = (path) => {
+        if (path === '/') {
+            return location.pathname === '/';
+        }
+        return location.pathname.startsWith(path);
+    };
 
     return (
         <nav className="fixed w-full z-50 bg-white/90 backdrop-blur border-b border-slate-100">
@@ -19,21 +42,18 @@ export const Navbar = () => {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center space-x-8">
-                        <Link to="/" className="text-brand-700 font-bold transition-colors">
-                            <Text en="Home" th="หน้าแรก" />
-                        </Link>
-                        <Link to="/products" className="text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <Text en="Product" th="สินค้า" />
-                        </Link>
-                        <Link to="/about" className="text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <Text en="About Us" th="เกี่ยวกับเรา" />
-                        </Link>
-                        <Link to="/join" className="text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <Text en="Join Us" th="ร่วมงานกับเรา" />
-                        </Link>
-                        <Link to="/contact" className="text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <Text en="Contact Us" th="ติดต่อเรา" />
-                        </Link>
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.path}
+                                to={link.path}
+                                className={`font-medium transition-colors ${isActive(link.path)
+                                    ? 'text-brand-700 font-bold'
+                                    : 'text-slate-600 hover:text-brand-600'
+                                    }`}
+                            >
+                                <Text en={link.en} th={link.th} />
+                            </Link>
+                        ))}
 
                         {/* Language Toggle */}
                         <div className="flex items-center gap-4">
@@ -55,11 +75,32 @@ export const Navbar = () => {
                         >
                             <span>{lang === 'en' ? 'TH' : 'EN'}</span>
                         </button>
-                        <button className="text-slate-600 hover:text-brand-600 p-2 cursor-pointer">
-                            <Menu className="w-6 h-6" />
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="text-slate-600 hover:text-brand-600 p-2 cursor-pointer"
+                        >
+                            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
                     </div>
                 </div>
+
+                {/* Mobile Menu */}
+                {isOpen && (
+                    <div className="md:hidden py-4 space-y-2">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.path}
+                                to={link.path}
+                                className={`block px-4 py-2 rounded transition-colors ${isActive(link.path)
+                                    ? 'text-brand-700 font-bold bg-brand-50'
+                                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                                    }`}
+                            >
+                                <Text en={link.en} th={link.th} />
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
         </nav>
     );
