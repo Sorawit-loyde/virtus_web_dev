@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Contact, branches } from '../components/sections/Contact';
+import { Text } from '../components/common/Text';
 
 export const ContactPage = () => {
     const [selectedBranch, setSelectedBranch] = useState(branches[0]);
@@ -18,24 +19,18 @@ export const ContactPage = () => {
                         <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                             <div>
                                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                                    {selectedBranch.enName}
+                                    <Text en={selectedBranch.enName} th={selectedBranch.thName} />
                                 </h3>
                                 <p className="text-slate-500">
-                                    {selectedBranch.addressEn}
+                                    <Text en={selectedBranch.addressEn} th={selectedBranch.addressTh} />
                                 </p>
                             </div>
-                            <a
-                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedBranch.enName + ' ' + selectedBranch.addressEn)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-white text-brand-600 px-6 py-2.5 rounded-xl font-bold border border-brand-100 hover:bg-brand-50 transition-all shadow-sm flex items-center gap-2"
-                            >
-                                Open in Google Maps
-                            </a>
+
                         </div>
 
                         <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-200 shadow-inner border border-slate-200">
                             <iframe
+                                key={selectedBranch.id}
                                 src={selectedBranch.embedUrl}
                                 width="100%"
                                 height="100%"

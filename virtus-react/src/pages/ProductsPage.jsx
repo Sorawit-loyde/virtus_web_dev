@@ -20,26 +20,7 @@ export const ProductsPage = () => {
 
             <Products />
 
-            {/* Optional: Add a call to action or technical support section */}
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-900 mb-4">
-                    <h2 className="text-3xl font-bold mb-8">
-                        <Text en="Looking for specific parts?" th="กำลังมองหาชิ้นส่วนเฉพาะทางอยู่ใช่ไหม?" />
-                    </h2>
-                    <p className="text-slate-600 mb-8 max-w-2xl mx-auto">
-                        <Text
-                            en="We stock thousands of items. If you can't find what you're looking for, our technical team is ready to assist you."
-                            th="เรามีสินค้าสำรองนับพันรายการ หากคุณไม่พบสิ่งที่ต้องการ ทีมงานเทคนิคของเราพร้อมให้การช่วยเหลือ"
-                        />
-                    </p>
-                    <a
-                        href="/contact"
-                        className="inline-block bg-brand-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-brand-700 transition-colors"
-                    >
-                        <Text en="Contact Our Experts" th="ติดต่อผู้เชี่ยวชาญของเรา" />
-                    </a>
-                </div>
-            </section>
+
         </main>
     );
 };
