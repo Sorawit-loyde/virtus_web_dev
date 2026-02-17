@@ -1,7 +1,63 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Package, Tag, Layers, ImageIcon, X, Upload, FileText } from 'lucide-react';
-import { getProductsByCategory, addProduct, deleteProduct, uploadFile } from '../services/api';
+import { ArrowLeft, Plus, Trash2, Package, Tag, Layers, ImageIcon, X, Upload, FileText, GripVertical } from 'lucide-react';
+import { getProductsByCategory, addProduct, deleteProduct, uploadFile, reorderItems } from '../services/api';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+const SortableProductRow = React.memo(({ product, onDelete }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: product.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        willChange: 'transform',
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center group hover:border-brand-200 hover:shadow-md transition-all"
+        >
+            <div className="flex items-center gap-4">
+                <button
+                    {...attributes}
+                    {...listeners}
+                    className="p-1.5 text-slate-300 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all cursor-grab active:cursor-grabbing"
+                    title="Drag to reorder"
+                >
+                    <GripVertical className="w-5 h-5" />
+                </button>
+                <div className="w-16 h-16 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
+                    <img src={product.imageUrl} alt={product.enName} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                    <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors uppercase tracking-tight">{product.enName}</h4>
+                        {product.pdfUrl && <FileText className="w-3.5 h-3.5 text-red-500" />}
+                    </div>
+                    <p className="text-sm text-slate-500 font-medium">{product.thName}</p>
+                </div>
+            </div>
+            <button
+                onClick={() => onDelete(product.id)}
+                className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all active:scale-90"
+            >
+                <Trash2 className="w-5 h-5" />
+            </button>
+        </div>
+    );
+});
 
 const CategoryDetail = () => {
     const { id } = useParams();
@@ -91,12 +147,40 @@ const CategoryDetail = () => {
         }
     };
 
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
+
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = data.products.findIndex(p => p.id === active.id);
+        const newIndex = data.products.findIndex(p => p.id === over.id);
+
+        const newProducts = arrayMove(data.products, oldIndex, newIndex);
+        setData({ ...data, products: newProducts });
+
+        reorderItems('products', newProducts.map(p => p.id)).catch(err => {
+            console.error('Failed to save order:', err);
+            fetchData();
+        });
+    };
+
     if (loading) return <div className="p-8 text-center text-slate-500">Loading...</div>;
     if (!data) return <div className="p-8 text-center text-red-500">Category not found</div>;
 
     return (
         <div className="p-8 max-w-6xl mx-auto">
-            <Link to="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-brand-600 mb-8 transition-colors">
+            <Link to="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 px-3 py-1.5 rounded-lg mb-8 transition-all active:scale-95">
                 <ArrowLeft className="w-4 h-4" />
                 Back to Dashboard
             </Link>
@@ -115,7 +199,10 @@ const CategoryDetail = () => {
                 </div>
                 <button
                     onClick={() => setIsAdding(!isAdding)}
-                    className="bg-brand-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-brand-700 transition-all shadow-md self-end md:self-start"
+                    className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ${isAdding
+                        ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-500/20'
+                        } self-end md:self-start`}
                 >
                     {isAdding ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                     {isAdding ? 'Cancel' : 'New Product'}
@@ -236,7 +323,7 @@ const CategoryDetail = () => {
                             <button
                                 type="submit"
                                 disabled={uploading || pdfUploading}
-                                className="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-700 shadow-md transition-all disabled:bg-slate-300"
+                                className="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-500/20 transition-all active:scale-95 disabled:bg-slate-300"
                             >
                                 Save Product
                             </button>
@@ -257,30 +344,15 @@ const CategoryDetail = () => {
                         <h3 className="text-lg font-medium text-slate-500">No products yet</h3>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-4">
-                        {data.products.map(product => (
-                            <div key={product.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center group hover:border-brand-100 transition-colors">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
-                                        <img src={product.imageUrl} alt={product.enName} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h4 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{product.enName}</h4>
-                                            {product.pdfUrl && <FileText className="w-3.5 h-3.5 text-red-500" />}
-                                        </div>
-                                        <p className="text-sm text-slate-500">{product.thName}</p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => handleDeleteProduct(product.id)}
-                                    className="p-2 text-slate-300 hover:text-red-600 transition-colors"
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                        <SortableContext items={data.products.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                            <div className="grid grid-cols-1 gap-4">
+                                {data.products.map(product => (
+                                    <SortableProductRow key={product.id} product={product} onDelete={handleDeleteProduct} />
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </SortableContext>
+                    </DndContext>
                 )}
             </div>
         </div>

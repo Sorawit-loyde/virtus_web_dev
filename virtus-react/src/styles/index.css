@@ -20,6 +20,10 @@
   body {
     @apply font-sans antialiased text-slate-800 bg-white transition-colors duration-300;
   }
+
+  button {
+    cursor: pointer;
+  }
 }
 
 @layer utilities {

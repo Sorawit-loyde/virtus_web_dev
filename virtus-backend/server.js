@@ -61,12 +61,13 @@ const pool = new Pool({
 // --- Category Routes ---
 app.get('/api/categories', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM categories ORDER BY id ASC');
+        const result = await pool.query('SELECT * FROM categories ORDER BY sort_order ASC, id ASC');
         const categories = result.rows.map(row => ({
             id: row.id,
             enTitle: row.en_title,
             thTitle: row.th_title,
-            imageUrl: row.image_url
+            imageUrl: row.image_url,
+            sortOrder: row.sort_order
         }));
         res.json(categories);
     } catch (err) {
@@ -132,14 +133,15 @@ app.get('/api/products/:categoryId', async (req, res) => {
             imageUrl: categoryResult.rows[0].image_url
         };
 
-        const productsResult = await pool.query('SELECT * FROM products WHERE category_id = $1', [categoryId]);
+        const productsResult = await pool.query('SELECT * FROM products WHERE category_id = $1 ORDER BY sort_order ASC, id ASC', [categoryId]);
         const products = productsResult.rows.map(row => ({
             id: row.id,
             categoryId: row.category_id,
             enName: row.en_name,
             thName: row.th_name,
             imageUrl: row.image_url,
-            pdfUrl: row.pdf_url
+            pdfUrl: row.pdf_url,
+            sortOrder: row.sort_order
         }));
 
         res.json({ category, products });
@@ -177,12 +179,13 @@ app.delete('/api/products/:id', async (req, res) => {
 // --- Catalogue Routes ---
 app.get('/api/catalogues', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM catalogues ORDER BY id DESC');
+        const result = await pool.query('SELECT * FROM catalogues ORDER BY sort_order ASC, id DESC');
         const catalogues = result.rows.map(row => ({
             id: row.id,
             enTitle: row.en_title,
             thTitle: row.th_title,
-            pdfUrl: row.pdf_url
+            pdfUrl: row.pdf_url,
+            sortOrder: row.sort_order
         }));
         res.json(catalogues);
     } catch (err) {
@@ -213,6 +216,38 @@ app.delete('/api/catalogues/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting catalogue:', err);
         res.status(500).json({ error: 'Failed to delete catalogue' });
+    }
+});
+
+// --- Reorder Route ---
+app.post('/api/reorder', async (req, res) => {
+    const { type, order } = req.body; // type: 'categories', 'products', 'catalogues'; order: [id1, id2, ...]
+
+    if (!['categories', 'products', 'catalogues'].includes(type) || !Array.isArray(order)) {
+        return res.status(400).json({ error: 'Invalid reorder data' });
+    }
+
+    try {
+        // Use a transaction for bulk update
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            for (let i = 0; i < order.length; i++) {
+                // Ensure id type matches (categories uses VARCHAR, others use SERIAL/INT)
+                // Use i * 10 or just i as the order
+                await client.query(`UPDATE ${type} SET sort_order = $1 WHERE id = $2`, [i, order[i]]);
+            }
+            await client.query('COMMIT');
+            res.json({ message: 'Order updated successfully' });
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
+        } finally {
+            client.release();
+        }
+    } catch (err) {
+        console.error('Reorder error:', err);
+        res.status(500).json({ error: 'Failed to set new order' });
     }
 });
 

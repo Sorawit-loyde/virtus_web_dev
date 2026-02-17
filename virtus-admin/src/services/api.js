@@ -19,6 +19,8 @@ export const getCatalogues = () => api.get('/catalogues');
 export const addCatalogue = (data) => api.post('/catalogues', data);
 export const deleteCatalogue = (id) => api.delete(`/catalogues/${id}`);
 
+export const reorderItems = (type, order) => api.post('/reorder', { type, order });
+
 export const uploadFile = (file) => {
     const formData = new FormData();
     formData.append('file', file);
