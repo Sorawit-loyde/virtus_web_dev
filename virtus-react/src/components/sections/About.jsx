@@ -5,11 +5,11 @@ export const About = () => {
     return (
         <section id="about" className="py-24 bg-white overflow-hidden relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="max-w-3xl">
+                <div className="max-w-5xl">
                     <div className="inline-block bg-brand-50 text-brand-700 px-4 py-2 rounded-full font-bold text-sm mb-6">
                         <Text en="About Virtus" th="เกี่ยวกับเวอร์ทัส" />
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-8 leading-tight">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-8 leading-tight lg:whitespace-nowrap">
                         <Text
                             en="Regional Excellence in Engineering Components"
                             th="ความเป็นเลิศด้านชิ้นส่วนวิศวกรรมในระดับภูมิภาค"
@@ -17,7 +17,7 @@ export const About = () => {
                     </h2>
                     <p className="text-slate-600 text-lg mb-8 leading-relaxed italic border-l-4 border-brand-500 pl-6">
                         <Text
-                            en="A leading regional manufacturer and distributor, maintaining industry leadership through genuine added value and comprehensive inventory."
+                            en="A top regional manufacturer and distributor, ensuring industry leadership with real added value and a full inventory."
                             th="ผู้ผลิตและจัดจำหน่ายชั้นนำ รักษาความเป็นผู้นำด้วยการสร้างมูลค่าเพิ่มและสำรองสินค้าอย่างครบถ้วนที่สุด"
                         />
                     </p>

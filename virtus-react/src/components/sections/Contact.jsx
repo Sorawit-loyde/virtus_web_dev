@@ -49,29 +49,31 @@ export const branches = [
 const ContactCard = ({ branch, isActive, onClick }) => (
     <div
         onClick={onClick}
-        className={`p-8 rounded-2xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md flex flex-col h-full ${isActive ? 'bg-brand-50 border-brand-200' : 'bg-white border-slate-100'}`}
+        className={`p-10 rounded-[2.5rem] border transition-all duration-700 cursor-pointer shadow-sm hover:shadow-2xl flex flex-col h-full transform hover:-translate-y-2 ${isActive ? 'bg-white border-brand-500 ring-4 ring-brand-50' : 'bg-white border-slate-100 hover:border-brand-200'}`}
     >
         <div className="flex-grow">
-            <div className="flex items-center gap-3 mb-6">
-                <div className={`p-3 rounded-xl ${isActive ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
-                    <MapPin className="w-6 h-6" />
+            <div className="flex items-center gap-4 mb-8">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${isActive ? 'bg-brand-600 text-white rotate-6 shadow-lg shadow-brand-200' : 'bg-slate-100 text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600'}`}>
+                    <MapPin className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">
+                <h3 className={`text-xl font-black uppercase tracking-tight leading-tight ${isActive ? 'text-brand-600' : 'text-slate-900'}`}>
                     <Text en={branch.enName} th={branch.thName} />
                 </h3>
             </div>
 
-            <p className="text-slate-600 mb-6 text-sm md:text-base leading-relaxed min-h-[4rem]">
+            <p className="text-slate-500 font-medium mb-8 text-sm md:text-base leading-relaxed">
                 <Text en={branch.addressEn} th={branch.addressTh} />
             </p>
         </div>
 
-        <div className="space-y-4 pt-6 border-t border-slate-50 mt-auto">
-            <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-brand-600 flex-shrink-0 mt-0.5" />
+        <div className="space-y-5 pt-8 border-t border-slate-50 mt-auto">
+            <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 text-brand-600" />
+                </div>
                 <div className="flex flex-col gap-1">
                     {branch.phones.map((phone, i) => (
-                        <a key={i} href={`tel:${phone.replace(/\s/g, '')}`} className="text-slate-700 font-medium hover:text-brand-600 transition-colors">
+                        <a key={i} href={`tel:${phone.replace(/\s/g, '')}`} className="text-slate-900 font-black text-sm hover:text-brand-600 transition-colors">
                             {phone}
                         </a>
                     ))}
@@ -79,18 +81,22 @@ const ContactCard = ({ branch, isActive, onClick }) => (
             </div>
 
             {branch.fax && (
-                <div className="flex items-start gap-3">
-                    <Printer className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
-                    <div className="text-slate-500 font-medium">
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center flex-shrink-0">
+                        <Printer className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div className="text-slate-500 font-bold text-sm pt-2">
                         {Array.isArray(branch.fax) ? branch.fax.join(', ') : branch.fax}
                     </div>
                 </div>
             )}
 
             {branch.email && (
-                <div className="flex items-start gap-3">
-                    <Mail className="w-5 h-5 text-brand-600 flex-shrink-0 mt-0.5" />
-                    <a href={`mailto:${branch.email}`} className="text-slate-700 font-medium hover:text-brand-600 transition-colors break-all">
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                        <Mail className="w-5 h-5 text-brand-600" />
+                    </div>
+                    <a href={`mailto:${branch.email}`} className="text-slate-900 font-black text-sm hover:text-brand-600 transition-colors break-all flex items-center h-10">
                         {branch.email}
                     </a>
                 </div>
@@ -101,22 +107,23 @@ const ContactCard = ({ branch, isActive, onClick }) => (
 
 export const Contact = ({ activeBranchId, onBranchSelect }) => {
     return (
-        <section id="contact" className="py-24 bg-white">
+        <section id="contact" className="py-24 bg-transparent relative z-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mx-auto mb-16">
-
-                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 font-thai">
-                        <Text en="Contact Us" th="ติดต่อเรา" />
+                <div className="text-center max-w-5xl mx-auto mb-20">
+                    <span className="text-brand-600 font-black uppercase tracking-[0.2em] text-[10px] mb-4 block">Get In Touch</span>
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight uppercase">
+                        <Text en="Our Locations" th="สาขาของเรา" />
                     </h2>
-                    <p className="text-slate-600 text-lg leading-relaxed">
+                    <div className="w-20 h-2 bg-brand-600 rounded-full mx-auto mb-8"></div>
+                    <p className="text-slate-500 text-lg font-medium leading-relaxed lg:whitespace-nowrap">
                         <Text
-                            en="Visit any of our regional branches or contact our specialists via phone or email for technical support and inquiries."
+                            en="Visit any of our regional branches or contact our specialists for comprehensive technical support."
                             th="เยี่ยมชมสาขาหรือโทรสอบถามข้อมูลเพิ่มเติมเกี่ยวกับชิ้นส่วนวิศวกรรมและอะไหล่เครื่องจักร"
                         />
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-12">
+                <div className="grid md:grid-cols-2 gap-10 lg:gap-14">
                     {branches.map((branch) => (
                         <ContactCard
                             key={branch.id}
@@ -127,33 +134,38 @@ export const Contact = ({ activeBranchId, onBranchSelect }) => {
                     ))}
                 </div>
 
-                <div className="mt-20 p-8 rounded-3xl bg-slate-50 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                            <Clock className="w-6 h-6 text-brand-600" />
+                <div className="mt-24 p-12 rounded-[3rem] bg-white border border-slate-100 shadow-xl flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.02]">
+                        <Clock className="w-40 h-40" />
+                    </div>
+
+                    <div className="flex items-center gap-6 relative z-10">
+                        <div className="w-20 h-20 bg-slate-950 rounded-[2rem] flex items-center justify-center text-white shadow-2xl">
+                            <Clock className="w-10 h-10" />
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-900 leading-tight">
+                            <h4 className="text-2xl font-black text-slate-900 leading-tight uppercase tracking-tight">
                                 <Text en="Opening Hours" th="เวลาทำการ" />
                             </h4>
-                            <p className="text-sm text-slate-500">
+                            <p className="text-lg text-slate-400 font-medium">
                                 <Text
-                                    en="Mon-Sat: 8:30 - 17:30"
-                                    th="จันทร์-เสาร์: 8:30 - 17:30 น."
+                                    en="Mon-Sat: 08:30 - 17:30"
+                                    th="จันทร์-เสาร์: 08:30 - 17:30 น."
                                 />
                             </p>
                         </div>
                     </div>
-                    <div className="text-center md:text-right">
-                        <p className="text-sm text-slate-500 mb-1">
+
+                    <div className="text-center md:text-right relative z-10">
+                        <p className="text-sm text-slate-400 font-medium mb-2 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-full inline-block">
                             <Text
-                                en="*Dao Khanong Head Office closed on Saturdays"
-                                th="*สาขาดาวคะนอง (สำนักงานใหญ่) หยุดวันเสาร์"
+                                en="*Dao Khanong closed on Saturdays"
+                                th="*สาขาดาวคะนอง หยุดวันเสาร์"
                             />
                         </p>
-                        <p className="text-sm text-red-500 font-medium">
+                        <p className="text-lg text-red-500 font-black uppercase tracking-tight md:block">
                             <Text
-                                en="Closed on Sundays & Public Holidays"
+                                en="Closed on Sundays & Holidays"
                                 th="หยุดวันอาทิตย์ และวันหยุดนักขัตฤกษ์"
                             />
                         </p>

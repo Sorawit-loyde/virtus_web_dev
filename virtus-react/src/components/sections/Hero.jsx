@@ -51,10 +51,13 @@ export const Hero = () => {
 
             <div className={`relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                 <div className="max-w-3xl">
+                    <span className="text-brand-400 font-black uppercase tracking-[0.2em] text-sm mb-6 block">
+                        <Text en="Leading Industrial Excellence" th="ผู้นำด้านความเป็นเลิศในอุตสาหกรรม" />
+                    </span>
                     <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter mb-6 leading-[1.1] drop-shadow-2xl">
-                        VIRTUS <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-600">
-                            <Text en="Company" th="คัมพานี" />
+                        <Text en="VIRTUS" th="บริษัท" /> <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-600 uppercase">
+                            <Text en="Company" th="เวอร์ทัส" />
                         </span>
                     </h1>
 

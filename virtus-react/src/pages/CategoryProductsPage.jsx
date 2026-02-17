@@ -57,69 +57,84 @@ export const CategoryProductsPage = () => {
     const { category, products } = data;
 
     return (
-        <main className="flex-grow pt-20 bg-slate-50 min-h-screen">
-            {/* Hero Section */}
-            <section className="bg-brand-900 py-16 text-white relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 pointer-events-none">
-                    <img src={category.imageUrl} className="w-full h-full object-cover blur-2xl scale-125" alt="" />
-                </div>
+        <main className="flex-grow pt-20 bg-slate-50 min-h-screen pb-32">
+            {/* Dark Premium Hero Section */}
+            <section className="bg-slate-900 py-32 text-white relative overflow-hidden mb-24">
+                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-full h-full bg-brand-600/10 rounded-full blur-[120px] opacity-40" />
+                <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] opacity-30" />
+
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <Link to="/products" className="inline-flex items-center gap-2 text-brand-200 hover:text-white mb-8 transition-colors text-sm font-medium">
-                        <ArrowLeft className="w-4 h-4" />
+                    <Link to="/products" className="inline-flex items-center gap-3 text-brand-400 hover:text-white mb-16 transition-all group font-black uppercase text-[10px] tracking-[0.2em] bg-white/5 px-6 py-3 rounded-full border border-white/10 backdrop-blur-md">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         <Text en="Back to All Categories" th="กลับไปหน้าหมวดหมู่" />
                     </Link>
-                    <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-                        <div className="w-32 h-32 md:w-40 md:h-40 bg-white/10 backdrop-blur-md rounded-2xl p-1 overflow-hidden border border-white/20 shadow-2xl flex-shrink-0">
-                            <img src={category.imageUrl} alt={category.enTitle} className="w-full h-full object-cover rounded-xl" />
+
+                    <div className="flex flex-col md:flex-row gap-12 items-center text-center md:text-left">
+                        <div className="w-48 h-48 md:w-56 md:h-56 bg-white/10 backdrop-blur-2xl rounded-[2rem] p-1 overflow-hidden border border-white/20 shadow-2xl flex-shrink-0">
+                            <img src={category.imageUrl} alt={category.enTitle} className="w-full h-full object-cover rounded-[1.8rem]" />
                         </div>
                         <div>
-                            <div className="flex items-center gap-3 mb-3">
-                                <Layers className="w-5 h-5 text-brand-300" />
-                                <span className="text-xs font-bold text-brand-200 uppercase tracking-widest">
-                                    <Text en="Category" th="หมวดหมู่" />
+                            <div className="flex items-center gap-4 mb-6 justify-center md:justify-start">
+                                <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                                    <Layers className="w-5 h-5" />
+                                </div>
+                                <span className="text-sm font-black text-brand-400 uppercase tracking-[0.2em]">
+                                    <Text en="Technical Category" th="หมวดหมู่ทางเทคนิค" />
                                 </span>
                             </div>
-                            <h1 className="text-3xl md:text-5xl font-bold mb-4 font-thai uppercase lg:leading-tight tracking-tight">
+                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 tracking-tighter uppercase leading-[1.1]">
                                 <Text en={category.enTitle} th={category.thTitle} />
                             </h1>
+                            <div className="w-20 h-2 bg-brand-600 rounded-full mx-auto md:mx-0"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Products Grid Section */}
-            <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-                <div className="flex items-center gap-3 mb-10 text-center md:text-left justify-center md:justify-start">
-                    <Package className="w-6 h-6 text-brand-600" />
-                    <h2 className="text-2xl font-bold text-slate-900">
-                        <Text en={`Available Products (${products.length})`} th={`รายการสินค้า (${products.length})`} />
-                    </h2>
+            <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl">
+                            <Package className="w-6 h-6" />
+                        </div>
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
+                            <Text en={`Product Range (${products.length})`} th={`รายการสินค้า (${products.length})`} />
+                        </h2>
+                    </div>
+
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-100 px-6 py-3 rounded-full">
+                        <Text en="Verified Specifications" th="ข้อมูลทางเทคนิคที่ผ่านการตรวจสอบ" />
+                    </div>
                 </div>
 
                 {products.length === 0 ? (
-                    <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-slate-200">
-                        <Tag className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-                        <h3 className="text-xl font-medium text-slate-400">
-                            <Text en="No products in this category yet" th="ยังไม่มีรายการสินค้าในหมวดหมู่นี้" />
+                    <div className="text-center py-32 bg-white rounded-[4rem] border border-dashed border-slate-200">
+                        <Tag className="w-16 h-16 text-slate-200 mx-auto mb-8" />
+                        <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tight">
+                            <Text en="No products found in this category" th="ยังไม่มีรายการสินค้าในหมวดหมู่นี้" />
                         </h3>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                         {products.map((product) => (
-                            <div key={product.id} className="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden flex flex-col h-full">
+                            <div key={product.id} className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] transition-all duration-700 group overflow-hidden flex flex-col h-full transform hover:-translate-y-2">
                                 {/* Product Image */}
                                 <div className="aspect-square bg-slate-50 relative overflow-hidden flex-shrink-0">
                                     <img
                                         src={product.imageUrl}
                                         alt={product.enName}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0"
                                     />
-                                    <div className="absolute inset-0 bg-brand-900/0 group-hover:bg-brand-900/5 transition-colors" />
+                                    <div className="absolute inset-0 bg-brand-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 </div>
 
                                 {/* Content */}
-                                <div className="p-6 flex flex-col flex-grow">
-                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors leading-tight mb-6 flex-grow flex items-center h-full">
+                                <div className="p-8 flex flex-col flex-grow">
+                                    <span className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-brand-500 mb-4">
+                                        Engineering Part
+                                    </span>
+                                    <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-600 transition-colors leading-tight mb-8 flex-grow uppercase tracking-tight">
                                         <Text en={product.enName} th={product.thName} />
                                     </h3>
 
@@ -129,13 +144,13 @@ export const CategoryProductsPage = () => {
                                                 href={product.pdfUrl}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="w-full inline-flex items-center justify-center bg-red-50 text-red-700 py-3 rounded-2xl font-black hover:bg-red-600 hover:text-white transition-all shadow-sm gap-2 text-xs"
+                                                className="w-full inline-flex items-center justify-center bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-brand-600 transition-all shadow-xl gap-3 text-xs uppercase tracking-widest group/btn"
                                             >
-                                                <FileText className="w-4 h-4" />
-                                                <Text en="View Full Specification" th="ดูข้อมูลผลิตภัณฑ์" />
+                                                <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                                                <Text en="Download Spec" th="ข้อมูลผลิตภัณฑ์" />
                                             </a>
                                         ) : (
-                                            <div className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-100 flex items-center justify-center gap-2 opacity-60">
+                                            <div className="w-full py-4 rounded-2xl border border-dashed border-slate-200 flex items-center justify-center gap-3 opacity-60 bg-slate-50">
                                                 <FileText className="w-4 h-4 text-slate-300" />
                                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Spec Pending</span>
                                             </div>

@@ -31,24 +31,26 @@ export const CataloguesPage = () => {
     }, []);
 
     return (
-        <main className="flex-grow pt-20 bg-slate-50 min-h-screen">
-            {/* Hero Section */}
-            <section className="bg-slate-900 py-24 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl opacity-50" />
+        <main className="flex-grow pt-20 bg-slate-50 min-h-screen pb-32">
+            {/* Dark Premium Hero Section */}
+            <section className="bg-slate-900 py-32 text-white relative overflow-hidden mb-24">
+                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-full h-full bg-brand-600/10 rounded-full blur-[120px] opacity-40" />
+                <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] opacity-30" />
+
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center md:text-left">
-                    <div className="flex items-center justify-center md:justify-start gap-3 mb-6">
-                        <div className="p-2 bg-brand-500/20 rounded-lg">
-                            <BookOpen className="w-6 h-6 text-brand-400" />
-                        </div>
-                        <span className="text-sm font-bold text-brand-400 uppercase tracking-widest">Resource Center</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-8 tracking-tight">
-                        <Text en="Technical Library" th="ห้องสมุดทางเทคนิค" />
-                    </h1>
-                    <p className="text-slate-400 text-xl max-w-2xl leading-relaxed mx-auto md:mx-0">
+                    <span className="text-brand-400 font-black uppercase tracking-[0.2em] text-sm mb-6 block">
+                        <Text en="Comprehensive Digital Archive" th="ศูนย์รวบรวมเอกสารทางเทคนิคมืออาชีพ" />
+                    </span>
+                    <h1 className="text-4xl md:text-6xl lg:text-8xl font-black mb-10 tracking-tighter leading-[1.1]">
                         <Text
-                            en="Download our latest brand catalogues and technical specifications."
-                            th="ดาวน์โหลดแคตตาล็อกแบรนด์ล่าสุดและเอกสารข้อมูลทางเทคนิคทั้งหมดของเราได้ที่นี่"
+                            en="Technical Library"
+                            th="ห้องสมุดทางเทคนิค"
+                        />
+                    </h1>
+                    <p className="text-slate-400 text-xl md:text-2xl max-w-3xl leading-relaxed mx-auto md:mx-0 font-medium italic border-l-4 border-brand-500 pl-8">
+                        <Text
+                            en="Access our complete database of brand-official catalogues, precise specifications, and professional engineering assets."
+                            th="เข้าถึงฐานข้อมูลแคตตาล็อกอย่างเป็นทางการ ข้อมูลทางเทคนิคที่แม่นยำ และเอกสารอ้างอิงทางวิศวกรรมระดับมืออาชีพทั้งหมดของเรา"
                         />
                     </p>
                 </div>

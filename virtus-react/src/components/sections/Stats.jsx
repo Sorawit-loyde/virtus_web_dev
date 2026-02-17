@@ -34,30 +34,27 @@ export const Stats = () => {
     ];
 
     return (
-        <section className="bg-slate-900 overflow-hidden relative">
-            {/* Glossy line at the top */}
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
+        <section className="bg-slate-950 overflow-hidden relative py-32">
+            {/* Soft Radial Background */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-900/10 via-transparent to-transparent opacity-50" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-16 gap-x-12">
                     {stats.map((stat, idx) => (
                         <div key={idx} className="flex flex-col items-center text-center group">
-                            <div className="mb-4 p-3 rounded-2xl bg-white/5 border border-white/10 text-brand-400 group-hover:scale-110 transition-transform duration-500">
-                                <stat.icon className="w-8 h-8" />
+                            <div className="mb-8 w-20 h-20 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition-all duration-700 shadow-2xl backdrop-blur-sm group-hover:-translate-y-2">
+                                <stat.icon className="w-10 h-10" />
                             </div>
-                            <div className="text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight">
+                            <div className="text-5xl lg:text-7xl font-black text-white mb-4 tracking-tighter">
                                 {stat.value}
                             </div>
-                            <div className="text-slate-400 font-medium text-sm lg:text-base tracking-wide whitespace-nowrap">
+                            <div className="text-slate-500 font-black text-[10px] lg:text-[11px] uppercase tracking-[0.3em] whitespace-nowrap">
                                 <Text en={stat.en} th={stat.th} />
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
-
-            {/* Bottom glossy line */}
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
         </section>
     );
 };

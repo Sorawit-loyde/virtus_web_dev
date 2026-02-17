@@ -71,9 +71,6 @@ export const Products = () => {
                                     <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
                                         <Text en="Looking for full specifications?" th="ต้องการข้อมูลทางเทคนิคทั้งหมด?" />
                                     </h3>
-                                    <p className="text-slate-500 text-sm sm:text-base mt-1 italic">
-                                        <Text en="Download PDF catalogues from our world-leading partners." th="ดาวน์โหลดแคตตาล็อก PDF จากแบรนด์ชั้นนำระดับโลก" />
-                                    </p>
                                 </div>
                             </div>
 
@@ -99,33 +96,40 @@ export const Products = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
                     {categories.map((cat) => (
                         <a
                             key={cat.id}
                             href={`/products/${cat.id}`}
-                            className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col"
+                            className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] transition-all duration-700 border border-slate-100 flex flex-col h-full transform hover:-translate-y-2"
                         >
-                            {/* Image Placeholder Area */}
-                            <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
+                            {/* Category Image */}
+                            <div className="aspect-[1.2/1] bg-slate-50 relative overflow-hidden flex-shrink-0">
                                 <img
                                     src={cat.imageUrl}
                                     alt={cat.enTitle}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0"
                                 />
-                                <div className="absolute inset-0 bg-brand-900/5 group-hover:bg-transparent transition-colors" />
+                                <div className="absolute inset-0 bg-brand-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-2xl scale-0 group-hover:scale-100 transition-transform duration-500">
+                                        <ArrowRight className="w-6 h-6 text-brand-600" />
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="p-6 flex flex-col flex-grow">
-                                <h3 className="text-lg font-bold text-slate-900 mb-4 group-hover:text-brand-600 transition-colors leading-tight min-h-[3.5rem] flex items-center">
-                                    <Text en={cat.enTitle} th={cat.thTitle} />
-                                </h3>
-
-                                <div className="mt-auto flex items-center justify-between text-brand-600 font-bold text-sm">
-                                    <span className="flex items-center gap-1 group-hover:gap-2 transition-all">
-                                        <Text en="View Products" th="ดูสินค้า" />
-                                        <ArrowRight className="w-4 h-4" />
+                            <div className="p-8 flex flex-col flex-grow">
+                                <div className="flex-grow">
+                                    <span className="inline-block text-xs font-black uppercase tracking-[0.15em] text-brand-500 mb-3">
+                                        <Text en="Technical Category" th="หมวดหมู่ทางเทคนิค" />
                                     </span>
+                                    <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-600 transition-colors leading-tight min-h-[4rem] flex items-start uppercase tracking-tight">
+                                        <Text en={cat.enTitle} th={cat.thTitle} />
+                                    </h3>
+                                </div>
+
+                                <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between text-slate-400 font-black text-[10px] uppercase tracking-widest">
+                                    <span>Explore Range</span>
+                                    <ArrowRight className="w-4 h-4 text-brand-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
                                 </div>
                             </div>
                         </a>
