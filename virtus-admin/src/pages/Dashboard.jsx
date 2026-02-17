@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Package, FolderOpen, ExternalLink, RefreshCw, X, Image as ImageIcon, Upload } from 'lucide-react';
-import { getCategories, deleteCategory, addCategory, uploadImage } from '../services/api';
+import { Plus, Edit2, Trash2, Package, FolderOpen, ExternalLink, RefreshCw, X, Image as ImageIcon, Upload, BookOpen } from 'lucide-react';
+import { getCategories, deleteCategory, addCategory, uploadFile } from '../services/api';
 
 const Dashboard = () => {
     const [categories, setCategories] = useState([]);
@@ -50,8 +50,8 @@ const Dashboard = () => {
 
         setUploading(true);
         try {
-            const { data } = await uploadImage(file);
-            setFormData(prev => ({ ...prev, imageUrl: data.imageUrl }));
+            const { data } = await uploadFile(file);
+            setFormData(prev => ({ ...prev, imageUrl: data.url }));
         } catch (err) {
             console.error('Upload failed:', err);
             alert('Image upload failed');
@@ -94,6 +94,13 @@ const Dashboard = () => {
                         <Plus className="w-5 h-5" />
                         Add Category
                     </button>
+                    <Link
+                        to="/catalogues"
+                        className="bg-slate-900 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-slate-800 transition-all shadow-sm"
+                    >
+                        <BookOpen className="w-5 h-5" />
+                        Manage Catalogues
+                    </Link>
                 </div>
             </div>
 

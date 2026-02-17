@@ -8,6 +8,7 @@ import { ProductsPage } from './pages/ProductsPage';
 import { CategoryProductsPage } from './pages/CategoryProductsPage';
 import { ContactPage } from './pages/ContactPage';
 import { JoinUsPage } from './pages/JoinUsPage';
+import { CataloguesPage } from './pages/CataloguesPage';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import './styles/index.css';
 
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<ProductsPage />} />
                 <Route path="/products/:categoryId" element={<CategoryProductsPage />} />
+                <Route path="/catalogues" element={<CataloguesPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/join" element={<JoinUsPage />} />
                 <Route path="/contact" element={<ContactPage />} />

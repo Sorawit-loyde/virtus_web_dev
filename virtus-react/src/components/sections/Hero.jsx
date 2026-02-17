@@ -70,7 +70,7 @@ export const Hero = () => {
 
                     <div className="flex flex-wrap gap-5">
                         <Link
-                            to="/products"
+                            to="/catalogues"
                             className="group bg-brand-600 hover:bg-brand-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-xl shadow-brand-900/20 flex items-center gap-3 cursor-pointer hover:-translate-y-1"
                         >
                             <Text en="View Catalog" th="ดูรายการสินค้า" />

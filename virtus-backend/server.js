@@ -9,13 +9,23 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Middleware
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Range'],
+    exposedHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length']
+}));
 app.use(express.json());
+app.use('/uploads', express.static('uploads', {
+    setHeaders: (res, path) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+        res.set('Accept-Ranges', 'bytes');
+    }
+}));
 
-// Serve uploaded files statically
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Configure Multer for local storage
+// Multer Configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadDir = 'uploads/';
@@ -33,12 +43,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Upload Endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
+app.post('/api/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    res.json({ imageUrl });
+    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl });
 });
 
 // PostgreSQL Connection Pool
@@ -46,18 +56,9 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
 
-// Test DB Connection
-pool.connect((err, client, release) => {
-    if (err) {
-        return console.error('Error acquiring client', err.stack);
-    }
-    console.log('Connected to PostgreSQL database');
-    release();
-});
-
 // Routes
 
-// Get all categories from Database
+// --- Category Routes ---
 app.get('/api/categories', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM categories ORDER BY id ASC');
@@ -74,7 +75,48 @@ app.get('/api/categories', async (req, res) => {
     }
 });
 
-// Get products by category from Database
+app.post('/api/categories', async (req, res) => {
+    const { id, enTitle, thTitle, imageUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO categories (id, en_title, th_title, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
+            [id, enTitle, thTitle, imageUrl]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error adding category:', err);
+        res.status(500).json({ error: 'Failed to add category' });
+    }
+});
+
+app.put('/api/categories/:id', async (req, res) => {
+    const { id } = req.params;
+    const { enTitle, thTitle, imageUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'UPDATE categories SET en_title = $1, th_title = $2, image_url = $3 WHERE id = $4 RETURNING *',
+            [enTitle, thTitle, imageUrl, id]
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error updating category:', err);
+        res.status(500).json({ error: 'Failed to update category' });
+    }
+});
+
+app.delete('/api/categories/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM products WHERE category_id = $1', [id]);
+        await pool.query('DELETE FROM categories WHERE id = $1', [id]);
+        res.json({ message: 'Category deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting category:', err);
+        res.status(500).json({ error: 'Failed to delete category' });
+    }
+});
+
+// --- Product Routes ---
 app.get('/api/products/:categoryId', async (req, res) => {
     const { categoryId } = req.params;
     try {
@@ -96,8 +138,8 @@ app.get('/api/products/:categoryId', async (req, res) => {
             categoryId: row.category_id,
             enName: row.en_name,
             thName: row.th_name,
-            spec: row.spec,
-            imageUrl: row.image_url
+            imageUrl: row.image_url,
+            pdfUrl: row.pdf_url
         }));
 
         res.json({ category, products });
@@ -107,77 +149,20 @@ app.get('/api/products/:categoryId', async (req, res) => {
     }
 });
 
-app.get('/api/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        db: 'PostgreSQL',
-        timestamp: new Date()
-    });
-});
-
-// --- Admin Specific Routes ---
-
-// Add Category
-app.post('/api/categories', async (req, res) => {
-    const { id, enTitle, thTitle, imageUrl } = req.body;
-    try {
-        const result = await pool.query(
-            'INSERT INTO categories (id, en_title, th_title, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
-            [id, enTitle, thTitle, imageUrl]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error('Error adding category:', err);
-        res.status(500).json({ error: 'Failed to add category' });
-    }
-});
-
-// Update Category
-app.put('/api/categories/:id', async (req, res) => {
-    const { id } = req.params;
-    const { enTitle, thTitle, imageUrl } = req.body;
-    try {
-        const result = await pool.query(
-            'UPDATE categories SET en_title = $1, th_title = $2, image_url = $3 WHERE id = $4 RETURNING *',
-            [enTitle, thTitle, imageUrl, id]
-        );
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error('Error updating category:', err);
-        res.status(500).json({ error: 'Failed to update category' });
-    }
-});
-
-// Delete Category
-app.delete('/api/categories/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await pool.query('DELETE FROM products WHERE category_id = $1', [id]);
-        await pool.query('DELETE FROM categories WHERE id = $1', [id]);
-        res.json({ message: 'Category deleted successfully' });
-    } catch (err) {
-        console.error('Error deleting category:', err);
-        res.status(500).json({ error: 'Failed to delete category' });
-    }
-});
-
-// Add Product
 app.post('/api/products', async (req, res) => {
-    const { categoryId, enName, thName, spec, imageUrl } = req.body;
-    console.log('Attempting to add product:', { categoryId, enName, thName, spec, imageUrl });
+    const { categoryId, enName, thName, imageUrl, pdfUrl } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO products (category_id, en_name, th_name, spec, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [categoryId, enName, thName, spec, imageUrl]
+            'INSERT INTO products (category_id, en_name, th_name, image_url, pdf_url) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [categoryId, enName, thName, imageUrl, pdfUrl]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error('DATABASE ERROR adding product:', err.message);
-        res.status(500).json({ error: 'Failed to add product', detail: err.message });
+        console.error('Error adding product:', err);
+        res.status(500).json({ error: 'Failed to add product' });
     }
 });
 
-// Delete Product
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -186,6 +171,48 @@ app.delete('/api/products/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting product:', err);
         res.status(500).json({ error: 'Failed to delete product' });
+    }
+});
+
+// --- Catalogue Routes ---
+app.get('/api/catalogues', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM catalogues ORDER BY id DESC');
+        const catalogues = result.rows.map(row => ({
+            id: row.id,
+            enTitle: row.en_title,
+            thTitle: row.th_title,
+            pdfUrl: row.pdf_url
+        }));
+        res.json(catalogues);
+    } catch (err) {
+        console.error('Error fetching catalogues:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.post('/api/catalogues', async (req, res) => {
+    const { enTitle, thTitle, pdfUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO catalogues (en_title, th_title, pdf_url) VALUES ($1, $2, $3) RETURNING *',
+            [enTitle, thTitle, pdfUrl]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error adding catalogue:', err);
+        res.status(500).json({ error: 'Failed to add catalogue' });
+    }
+});
+
+app.delete('/api/catalogues/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM catalogues WHERE id = $1', [id]);
+        res.json({ message: 'Catalogue deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting catalogue:', err);
+        res.status(500).json({ error: 'Failed to delete catalogue' });
     }
 });
 

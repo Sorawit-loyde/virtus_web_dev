@@ -17,6 +17,7 @@ export const Navbar = () => {
     const navLinks = [
         { path: '/', en: 'Home', th: 'หน้าแรก' },
         { path: '/products', en: 'Product', th: 'สินค้า' },
+        { path: '/catalogues', en: 'Catalogue', th: 'แคตตาล็อก' },
         { path: '/about', en: 'About Us', th: 'เกี่ยวกับเรา' },
         { path: '/join', en: 'Join Us', th: 'ร่วมงานกับเรา' },
         { path: '/contact', en: 'Contact Us', th: 'ติดต่อเรา' },

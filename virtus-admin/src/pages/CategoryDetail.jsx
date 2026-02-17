@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Package, Tag, Layers, ImageIcon, X, Upload } from 'lucide-react';
-import { getProductsByCategory, addProduct, deleteProduct, uploadImage } from '../services/api';
+import { ArrowLeft, Plus, Trash2, Package, Tag, Layers, ImageIcon, X, Upload, FileText } from 'lucide-react';
+import { getProductsByCategory, addProduct, deleteProduct, uploadFile } from '../services/api';
 
 const CategoryDetail = () => {
     const { id } = useParams();
@@ -9,14 +9,16 @@ const CategoryDetail = () => {
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [pdfUploading, setPdfUploading] = useState(false);
     const [newProduct, setNewProduct] = useState({
         enName: '',
         thName: '',
-        spec: '',
-        imageUrl: ''
+        imageUrl: '',
+        pdfUrl: ''
     });
 
     const fileInputRef = useRef(null);
+    const pdfInputRef = useRef(null);
 
     const fetchData = async () => {
         setLoading(true);
@@ -40,8 +42,8 @@ const CategoryDetail = () => {
 
         setUploading(true);
         try {
-            const { data } = await uploadImage(file);
-            setNewProduct(prev => ({ ...prev, imageUrl: data.imageUrl }));
+            const { data } = await uploadFile(file);
+            setNewProduct(prev => ({ ...prev, imageUrl: data.url }));
         } catch (err) {
             console.error('Upload failed:', err);
             alert('Image upload failed');
@@ -50,17 +52,31 @@ const CategoryDetail = () => {
         }
     };
 
+    const handlePdfChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setPdfUploading(true);
+        try {
+            const { data } = await uploadFile(file);
+            setNewProduct(prev => ({ ...prev, pdfUrl: data.url }));
+        } catch (err) {
+            console.error('PDF upload failed:', err);
+            alert('PDF upload failed');
+        } finally {
+            setPdfUploading(false);
+        }
+    };
+
     const handleAddProduct = async (e) => {
         e.preventDefault();
         try {
             await addProduct({ ...newProduct, categoryId: id });
-            setNewProduct({ enName: '', thName: '', spec: '', imageUrl: '' });
+            setNewProduct({ enName: '', thName: '', imageUrl: '', pdfUrl: '' });
             setIsAdding(false);
             fetchData();
         } catch (err) {
-            console.error('ERROR details:', err.response?.data);
-            const errorMsg = err.response?.data?.detail || err.message;
-            alert(`Failed to add product: ${errorMsg}`);
+            alert('Failed to add product');
         }
     };
 
@@ -110,7 +126,7 @@ const CategoryDetail = () => {
                 <div className="bg-brand-50 rounded-3xl p-8 mb-8 border border-brand-100 animate-in slide-in-from-top duration-300">
                     <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                         <Plus className="w-5 h-5 text-brand-600" />
-                        Add New Item
+                        Add New Product
                     </h3>
                     <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
@@ -120,7 +136,7 @@ const CategoryDetail = () => {
                                 className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
                                 value={newProduct.enName}
                                 onChange={e => setNewProduct({ ...newProduct, enName: e.target.value })}
-                                placeholder="e.g. Deep Groove Ball Bearing"
+                                placeholder="Product Name (English)"
                             />
                         </div>
                         <div className="space-y-2">
@@ -130,9 +146,11 @@ const CategoryDetail = () => {
                                 className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
                                 value={newProduct.thName}
                                 onChange={e => setNewProduct({ ...newProduct, thName: e.target.value })}
-                                placeholder="เช่น ตลับลูกปืนเม็ดกลม..."
+                                placeholder="Product Name (Thai)"
                             />
                         </div>
+
+                        {/* Image Upload */}
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-slate-700 uppercase tracking-tight text-[11px]">Product Image</label>
                             <div className="flex gap-4 items-center">
@@ -145,7 +163,7 @@ const CategoryDetail = () => {
                                     ) : (
                                         <>
                                             <Upload className={`w-5 h-5 ${uploading ? 'animate-bounce text-brand-600' : 'text-slate-400'}`} />
-                                            <span className="text-[8px] text-slate-400 font-bold uppercase mt-1">Upload</span>
+                                            <span className="text-[8px] text-slate-400 font-bold uppercase mt-1">Image</span>
                                         </>
                                     )}
                                 </div>
@@ -157,26 +175,56 @@ const CategoryDetail = () => {
                                         className="hidden"
                                         accept="image/*"
                                     />
-                                    <p className="text-[10px] text-slate-400 leading-tight">Pick a local image file for this specific product.</p>
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
                                         className="text-xs font-bold text-brand-600 hover:underline"
                                     >
-                                        {newProduct.imageUrl ? 'Change Image' : 'Select File'}
+                                        {newProduct.imageUrl ? 'Change Image' : 'Select Image'}
                                     </button>
                                 </div>
                             </div>
                         </div>
+
+                        {/* PDF Upload */}
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 uppercase tracking-tight">Specification / Detail</label>
-                            <input
-                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all"
-                                value={newProduct.spec}
-                                onChange={e => setNewProduct({ ...newProduct, spec: e.target.value })}
-                                placeholder="e.g. Series 6000, 2RS, C3"
-                            />
+                            <label className="text-sm font-bold text-slate-700 uppercase tracking-tight text-[11px]">Product PDF (Spec)</label>
+                            <div className="flex gap-4 items-center">
+                                <div
+                                    onClick={() => pdfInputRef.current?.click()}
+                                    className="w-20 h-20 bg-white rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50 cursor-pointer overflow-hidden transition-all group flex-shrink-0"
+                                >
+                                    {newProduct.pdfUrl ? (
+                                        <div className="text-center">
+                                            <FileText className="w-8 h-8 text-red-500 mx-auto" />
+                                            <span className="text-[8px] text-slate-500 font-bold uppercase block mt-1 truncate px-2">PDF Ready</span>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <Upload className={`w-5 h-5 ${pdfUploading ? 'animate-bounce text-brand-600' : 'text-slate-400'}`} />
+                                            <span className="text-[8px] text-slate-400 font-bold uppercase mt-1">PDF File</span>
+                                        </>
+                                    )}
+                                </div>
+                                <div className="flex-grow space-y-1">
+                                    <input
+                                        type="file"
+                                        ref={pdfInputRef}
+                                        onChange={handlePdfChange}
+                                        className="hidden"
+                                        accept=".pdf"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => pdfInputRef.current?.click()}
+                                        className="text-xs font-bold text-brand-600 hover:underline"
+                                    >
+                                        {newProduct.pdfUrl ? 'Change PDF' : 'Select PDF'}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+
                         <div className="md:col-span-2 flex justify-end gap-4 mt-2">
                             <button
                                 type="button"
@@ -187,10 +235,10 @@ const CategoryDetail = () => {
                             </button>
                             <button
                                 type="submit"
-                                disabled={uploading}
+                                disabled={uploading || pdfUploading}
                                 className="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-700 shadow-md transition-all disabled:bg-slate-300"
                             >
-                                {uploading ? 'Uploading...' : 'Save Product'}
+                                Save Product
                             </button>
                         </div>
                     </form>
@@ -206,7 +254,7 @@ const CategoryDetail = () => {
                 {data.products.length === 0 ? (
                     <div className="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
                         <Tag className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-slate-500">No products in this category yet</h3>
+                        <h3 className="text-lg font-medium text-slate-500">No products yet</h3>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4">
@@ -217,9 +265,11 @@ const CategoryDetail = () => {
                                         <img src={product.imageUrl} alt={product.enName} className="w-full h-full object-cover" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{product.enName}</h4>
+                                        <div className="flex items-center gap-2">
+                                            <h4 className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{product.enName}</h4>
+                                            {product.pdfUrl && <FileText className="w-3.5 h-3.5 text-red-500" />}
+                                        </div>
                                         <p className="text-sm text-slate-500">{product.thName}</p>
-                                        <p className="text-[10px] bg-slate-50 text-slate-500 inline-block px-2 py-0.5 rounded mt-1">{product.spec || 'No spec'}</p>
                                     </div>
                                 </div>
                                 <button
