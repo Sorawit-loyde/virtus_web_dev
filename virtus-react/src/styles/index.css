@@ -24,6 +24,11 @@
   button {
     cursor: pointer;
   }
+
+  /* Lock the footer to Inter — prevent Thai font cascade from body.th shifting footer layout */
+  footer {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+  }
 }
 
 @layer utilities {

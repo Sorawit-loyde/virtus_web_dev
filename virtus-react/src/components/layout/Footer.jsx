@@ -3,7 +3,7 @@ import { Facebook } from 'lucide-react';
 
 export const Footer = () => {
     return (
-        <footer className="bg-slate-900 text-slate-400 pt-12 pb-8 border-t border-slate-800 relative overflow-hidden">
+        <footer className="bg-slate-900 text-slate-400 pt-12 pb-8 border-t border-slate-800 relative overflow-hidden font-sans" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
             {/* Decoration */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-600 via-blue-600 to-brand-400" />
 
@@ -15,7 +15,7 @@ export const Footer = () => {
                         <div className="flex items-center gap-2">
                             <img src="/assets/images/Logo-virtus.png" alt="VIRTUS" className="h-12 w-auto object-contain brightness-0 invert" />
                         </div>
-                        <p className="text-sm leading-relaxed text-slate-500 font-medium">
+                        <p className="text-sm leading-6 text-slate-500 font-medium h-12" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
                             Premium manufacturer and distributor of mechanical engineering parts and industrial machinery spares since 2018.
                         </p>
                         <div className="pt-8 mt-auto text-xs text-slate-600 font-bold uppercase tracking-widest border-t border-slate-800">
@@ -56,9 +56,9 @@ export const Footer = () => {
                                 { name: 'Phet Kasem Branch', tel: '0 2420 3494-5' },
                                 { name: 'Chonburi Branch', tel: '0 3814 8037-9' }
                             ].map((branch) => (
-                                <div key={branch.name} className="flex flex-col gap-1 border-l-2 border-slate-800 pl-4 hover:border-brand-600 transition-colors">
-                                    <p className="text-slate-300 font-black uppercase text-[10px] tracking-widest">{branch.name}</p>
-                                    <p className="text-slate-500 font-bold font-mono text-xs">{branch.tel}</p>
+                                <div key={branch.name} className="flex flex-col gap-1 border-l-2 border-slate-800 pl-4 hover:border-brand-600 transition-colors h-[42px] justify-center">
+                                    <p className="text-slate-300 font-black uppercase text-[10px] tracking-widest leading-tight" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>{branch.name}</p>
+                                    <p className="text-slate-500 font-bold font-mono text-xs leading-tight" style={{ fontFamily: '"Courier New", Courier, monospace' }}>{branch.tel}</p>
                                 </div>
                             ))}
                         </div>

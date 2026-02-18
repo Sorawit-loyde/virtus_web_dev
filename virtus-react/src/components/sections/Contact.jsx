@@ -115,7 +115,7 @@ export const Contact = ({ activeBranchId, onBranchSelect }) => {
                         <Text en="Our Locations" th="สาขาของเรา" />
                     </h2>
                     <div className="w-20 h-2 bg-brand-600 rounded-full mx-auto mb-8"></div>
-                    <p className="text-slate-500 text-lg font-medium leading-relaxed lg:whitespace-nowrap">
+                    <p className="text-slate-500 text-lg font-medium leading-relaxed">
                         <Text
                             en="Visit any of our regional branches or contact our specialists for comprehensive technical support."
                             th="เยี่ยมชมสาขาหรือโทรสอบถามข้อมูลเพิ่มเติมเกี่ยวกับชิ้นส่วนวิศวกรรมและอะไหล่เครื่องจักร"

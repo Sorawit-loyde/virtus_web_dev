@@ -53,9 +53,7 @@ export const AboutPage = () => {
                 {/* Company Expertise */}
                 <section className="mb-40">
                     <div className="bg-white p-12 md:p-20 rounded-[3rem] shadow-sm border border-slate-100 relative overflow-hidden mb-12">
-                        <div className="absolute top-0 right-0 p-12 opacity-[0.03]">
-                            <Factory className="w-64 h-64 -rotate-12" />
-                        </div>
+
                         <div className="relative z-10 max-w-4xl">
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="p-3 bg-slate-950 rounded-2xl text-white">
