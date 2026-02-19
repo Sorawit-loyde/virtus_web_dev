@@ -4,10 +4,33 @@ const { Pool } = require('pg');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Swagger Configuration
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Virtus Backend API',
+            version: '1.0.0',
+            description: 'API documentation for Virtus Backend'
+        },
+        servers: [
+            {
+                url: `http://localhost:${PORT}`,
+                description: 'Development server'
+            }
+        ]
+    },
+    apis: ['./server.js'] // Scan server.js for JSDoc comments
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Middleware
 app.use(cors({
@@ -24,6 +47,9 @@ app.use('/uploads', express.static('uploads', {
         res.set('Accept-Ranges', 'bytes');
     }
 }));
+
+// Swagger UI Route - MUST be before API routes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 
 // Multer Configuration
 const storage = multer.diskStorage({
@@ -43,6 +69,29 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Upload Endpoint
+/**
+ * @swagger
+ * /api/upload:
+ *   post:
+ *     summary: Upload a file
+ *     tags:
+ *       - Upload
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *       400:
+ *         description: No file uploaded
+ */
 app.post('/api/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
@@ -59,6 +108,17 @@ const pool = new Pool({
 // Routes
 
 // --- Category Routes ---
+/**
+ * @swagger
+ * /api/categories:
+ *   get:
+ *     summary: Get all categories
+ *     tags:
+ *       - Categories
+ *     responses:
+ *       200:
+ *         description: List of all categories
+ */
 app.get('/api/categories', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM categories ORDER BY sort_order ASC, id ASC');
@@ -76,6 +136,32 @@ app.get('/api/categories', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/categories:
+ *   post:
+ *     summary: Create a new category
+ *     tags:
+ *       - Categories
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               enTitle:
+ *                 type: string
+ *               thTitle:
+ *                 type: string
+ *               imageUrl:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ */
 app.post('/api/categories', async (req, res) => {
     const { id, enTitle, thTitle, imageUrl } = req.body;
     try {
@@ -90,6 +176,36 @@ app.post('/api/categories', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   put:
+ *     summary: Update a category
+ *     tags:
+ *       - Categories
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enTitle:
+ *                 type: string
+ *               thTitle:
+ *                 type: string
+ *               imageUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ */
 app.put('/api/categories/:id', async (req, res) => {
     const { id } = req.params;
     const { enTitle, thTitle, imageUrl } = req.body;
@@ -105,6 +221,23 @@ app.put('/api/categories/:id', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/categories/{id}:
+ *   delete:
+ *     summary: Delete a category
+ *     tags:
+ *       - Categories
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ */
 app.delete('/api/categories/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -118,6 +251,25 @@ app.delete('/api/categories/:id', async (req, res) => {
 });
 
 // --- Product Routes ---
+/**
+ * @swagger
+ * /api/products/{categoryId}:
+ *   get:
+ *     summary: Get products by category
+ *     tags:
+ *       - Products
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Products and category information
+ *       404:
+ *         description: Category not found
+ */
 app.get('/api/products/:categoryId', async (req, res) => {
     const { categoryId } = req.params;
     try {
@@ -151,6 +303,34 @@ app.get('/api/products/:categoryId', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Create a new product
+ *     tags:
+ *       - Products
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               categoryId:
+ *                 type: string
+ *               enName:
+ *                 type: string
+ *               thName:
+ *                 type: string
+ *               imageUrl:
+ *                 type: string
+ *               pdfUrl:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Product created successfully
+ */
 app.post('/api/products', async (req, res) => {
     const { categoryId, enName, thName, imageUrl, pdfUrl } = req.body;
     try {
@@ -165,6 +345,23 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Delete a product
+ *     tags:
+ *       - Products
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product deleted successfully
+ */
 app.delete('/api/products/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -177,6 +374,17 @@ app.delete('/api/products/:id', async (req, res) => {
 });
 
 // --- Catalogue Routes ---
+/**
+ * @swagger
+ * /api/catalogues:
+ *   get:
+ *     summary: Get all catalogues
+ *     tags:
+ *       - Catalogues
+ *     responses:
+ *       200:
+ *         description: List of all catalogues
+ */
 app.get('/api/catalogues', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM catalogues ORDER BY sort_order ASC, id DESC');
@@ -194,6 +402,30 @@ app.get('/api/catalogues', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/catalogues:
+ *   post:
+ *     summary: Create a new catalogue
+ *     tags:
+ *       - Catalogues
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enTitle:
+ *                 type: string
+ *               thTitle:
+ *                 type: string
+ *               pdfUrl:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Catalogue created successfully
+ */
 app.post('/api/catalogues', async (req, res) => {
     const { enTitle, thTitle, pdfUrl } = req.body;
     try {
@@ -208,6 +440,23 @@ app.post('/api/catalogues', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/catalogues/{id}:
+ *   delete:
+ *     summary: Delete a catalogue
+ *     tags:
+ *       - Catalogues
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Catalogue deleted successfully
+ */
 app.delete('/api/catalogues/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -220,6 +469,33 @@ app.delete('/api/catalogues/:id', async (req, res) => {
 });
 
 // --- Reorder Route ---
+/**
+ * @swagger
+ * /api/reorder:
+ *   post:
+ *     summary: Reorder items in a collection
+ *     tags:
+ *       - Reorder
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [categories, products, catalogues]
+ *               order:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Order updated successfully
+ *       400:
+ *         description: Invalid reorder data
+ */
 app.post('/api/reorder', async (req, res) => {
     const { type, order } = req.body; // type: 'categories', 'products', 'catalogues'; order: [id1, id2, ...]
 
