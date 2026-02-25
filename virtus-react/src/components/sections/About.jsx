@@ -9,7 +9,7 @@ export const About = () => {
                     <div className="inline-block bg-brand-50 text-brand-700 px-4 py-2 rounded-full font-bold text-sm mb-6">
                         <Text en="About Virtus" th="เกี่ยวกับเวอร์ทัส" />
                     </div>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-8 leading-tight lg:whitespace-nowrap">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-8 leading-tight">
                         <Text
                             en="Regional Excellence in Engineering Components"
                             th="ความเป็นเลิศด้านชิ้นส่วนวิศวกรรมในระดับภูมิภาค"
