@@ -5,7 +5,7 @@ services:
     plan: free
     rootDir: virtus-backend
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: npm run init-db && npm start
     envVars:
       - key: NODE_ENV
         value: production
