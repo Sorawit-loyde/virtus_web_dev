@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 import { Loader2, FileText, AlertCircle } from 'lucide-react';
+import { getAssetUrl } from '../utils/url';
 
 // Set worker path
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export const PdfThumbnail = ({ url }) => {
     const canvasRef = useRef(null);
+    const resolvedUrl = getAssetUrl(url);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
@@ -17,13 +19,13 @@ export const PdfThumbnail = ({ url }) => {
         let loadingTask = null;
 
         const renderThumbnail = async () => {
-            if (!url) return;
+            if (!resolvedUrl) return;
             setLoading(true);
             setError(false);
 
             try {
                 loadingTask = pdfjsLib.getDocument({
-                    url: url,
+                    url: resolvedUrl,
                     // Security and compatibility settings
                     cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.624/cmaps/',
                     cMapPacked: true,

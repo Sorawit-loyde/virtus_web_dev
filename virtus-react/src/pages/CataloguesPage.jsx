@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Text } from '../components/common/Text';
 import { Download, BookOpen, Loader2, Package, FileText } from 'lucide-react';
 import { PdfThumbnail } from '../components/PdfThumbnail';
+import { getAssetUrl } from '../utils/url';
 
 export const CataloguesPage = () => {
     const [catalogues, setCatalogues] = useState([]);
@@ -81,12 +82,12 @@ export const CataloguesPage = () => {
                             <div key={item.id} className="group flex flex-col h-full">
                                 {/* Vertical "Book-Style" Thumbnail Rendering First Page */}
                                 <div className="aspect-[2/3] bg-white rounded-[2rem] overflow-hidden shadow-sm group-hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] transition-all duration-700 relative border border-slate-100">
-                                    <PdfThumbnail url={item.pdfUrl} />
+                                    <PdfThumbnail url={getAssetUrl(item.pdfUrl)} />
 
                                     {/* Download Overlay on Hover */}
                                     <div className="absolute inset-0 bg-brand-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
                                         <a
-                                            href={item.pdfUrl}
+                                            href={getAssetUrl(item.pdfUrl)}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="bg-white text-brand-900 px-8 py-4 rounded-2xl font-black shadow-2xl scale-90 group-hover:scale-100 transition-all flex items-center gap-3"

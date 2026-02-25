@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Loader2, Package, Tag, Layers, ExternalLink, FileText } from 'lucide-react';
 import { Text } from '../components/common/Text';
+import { getAssetUrl } from '../utils/url';
 
 export const CategoryProductsPage = () => {
     const { categoryId } = useParams();
@@ -71,7 +72,7 @@ export const CategoryProductsPage = () => {
 
                     <div className="flex flex-col md:flex-row gap-12 items-center text-center md:text-left">
                         <div className="w-48 h-48 md:w-56 md:h-56 bg-white/10 backdrop-blur-2xl rounded-[2rem] p-1 overflow-hidden border border-white/20 shadow-2xl flex-shrink-0">
-                            <img src={category.imageUrl} alt={category.enTitle} className="w-full h-full object-cover rounded-[1.8rem]" />
+                            <img src={getAssetUrl(category.imageUrl)} alt={category.enTitle} className="w-full h-full object-cover rounded-[1.8rem]" />
                         </div>
                         <div>
                             <div className="flex items-center gap-4 mb-6 justify-center md:justify-start">
@@ -122,7 +123,7 @@ export const CategoryProductsPage = () => {
                                 {/* Product Image */}
                                 <div className="aspect-square bg-slate-50 relative overflow-hidden flex-shrink-0">
                                     <img
-                                        src={product.imageUrl}
+                                        src={getAssetUrl(product.imageUrl)}
                                         alt={product.enName}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0"
                                     />
@@ -141,7 +142,7 @@ export const CategoryProductsPage = () => {
                                     <div className="mt-auto">
                                         {product.pdfUrl ? (
                                             <a
-                                                href={product.pdfUrl}
+                                                href={getAssetUrl(product.pdfUrl)}
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 className="w-full inline-flex items-center justify-center bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-brand-600 transition-all shadow-xl gap-3 text-xs uppercase tracking-widest group/btn"

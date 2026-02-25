@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Loader2, BookOpen } from 'lucide-react';
 import { Text } from '../common/Text';
+import { getAssetUrl } from '../../utils/url';
 
 export const Products = () => {
     const [categories, setCategories] = useState([]);
@@ -106,7 +107,7 @@ export const Products = () => {
                             {/* Category Image */}
                             <div className="aspect-[1.2/1] bg-slate-50 relative overflow-hidden flex-shrink-0">
                                 <img
-                                    src={cat.imageUrl}
+                                    src={getAssetUrl(cat.imageUrl)}
                                     alt={cat.enTitle}
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[20%] group-hover:grayscale-0"
                                 />
