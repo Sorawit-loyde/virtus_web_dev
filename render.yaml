@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: virtus-api
+    runtime: node
+    plan: free
+    rootDir: virtus-backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: virtus-db
+          property: connectionString
+      - key: PORT
+        value: 5000
+
+databases:
+  - name: virtus-db
+    plan: free
+    databaseName: virtus_db
+    user: virtus_user
