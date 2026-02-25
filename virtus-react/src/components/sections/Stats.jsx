@@ -48,7 +48,7 @@ export const Stats = () => {
                             <div className="text-5xl lg:text-7xl font-black text-white mb-4 tracking-tighter">
                                 {stat.value}
                             </div>
-                            <div className="text-slate-500 font-black text-[10px] lg:text-[11px] uppercase tracking-[0.3em] whitespace-nowrap">
+                            <div className="text-slate-500 font-black text-[11px] lg:text-xs uppercase tracking-[0.2em] whitespace-nowrap">
                                 <Text en={stat.en} th={stat.th} />
                             </div>
                         </div>

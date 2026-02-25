@@ -12,6 +12,7 @@
   --color-brand-800: #065184;
   --color-brand-900: #0a436e;
   --color-brand-950: #062b4a;
+  --font-sans: "Inter", "Prompt", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
@@ -19,6 +20,9 @@ body {
   min-height: 100vh;
   background: #f8fafc;
   color: #0f172a;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button {

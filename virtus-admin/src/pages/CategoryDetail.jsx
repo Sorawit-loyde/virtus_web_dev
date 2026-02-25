@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Package, Tag, Layers, ImageIcon, X, Upload, FileText, GripVertical } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, Package, Tag, Layers, ImageIcon, X, Upload, FileText, GripVertical } from 'lucide-react';
 import { getProductsByCategory, addProduct, deleteProduct, uploadFile, reorderItems } from '../services/api';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableProductRow = React.memo(({ product, onDelete }) => {
+const SortableProductRow = React.memo(({ product, onDelete, onEdit }) => {
     const {
         attributes,
         listeners,
@@ -49,12 +49,20 @@ const SortableProductRow = React.memo(({ product, onDelete }) => {
                     <p className="text-sm text-slate-500 font-medium">{product.thName}</p>
                 </div>
             </div>
-            <button
-                onClick={() => onDelete(product.id)}
-                className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all active:scale-90"
-            >
-                <Trash2 className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={() => onEdit(product)}
+                    className="p-2 text-slate-300 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-all active:scale-90"
+                >
+                    <Edit2 className="w-5 h-5" />
+                </button>
+                <button
+                    onClick={() => onDelete(product.id)}
+                    className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all active:scale-90"
+                >
+                    <Trash2 className="w-5 h-5" />
+                </button>
+            </div>
         </div>
     );
 });
@@ -64,6 +72,7 @@ const CategoryDetail = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [pdfUploading, setPdfUploading] = useState(false);
     const [newProduct, setNewProduct] = useState({
@@ -124,15 +133,31 @@ const CategoryDetail = () => {
         }
     };
 
+    const handleEditProduct = (product) => {
+        setNewProduct({
+            enName: product.enName,
+            thName: product.thName,
+            imageUrl: product.imageUrl,
+            pdfUrl: product.pdfUrl || ''
+        });
+        setEditingId(product.id);
+        setIsAdding(true);
+    };
+
     const handleAddProduct = async (e) => {
         e.preventDefault();
         try {
-            await addProduct({ ...newProduct, categoryId: id });
+            if (editingId) {
+                await updateProduct(editingId, { ...newProduct, categoryId: id });
+            } else {
+                await addProduct({ ...newProduct, categoryId: id });
+            }
             setNewProduct({ enName: '', thName: '', imageUrl: '', pdfUrl: '' });
+            setEditingId(null);
             setIsAdding(false);
             fetchData();
         } catch (err) {
-            alert('Failed to add product');
+            alert(editingId ? 'Failed to update product' : 'Failed to add product');
         }
     };
 
@@ -198,7 +223,13 @@ const CategoryDetail = () => {
                     <p className="text-lg text-slate-500">{data.category.thTitle}</p>
                 </div>
                 <button
-                    onClick={() => setIsAdding(!isAdding)}
+                    onClick={() => {
+                        if (isAdding) {
+                            setEditingId(null);
+                            setNewProduct({ enName: '', thName: '', imageUrl: '', pdfUrl: '' });
+                        }
+                        setIsAdding(!isAdding);
+                    }}
                     className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ${isAdding
                         ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-500/20'
@@ -212,8 +243,8 @@ const CategoryDetail = () => {
             {isAdding && (
                 <div className="bg-brand-50 rounded-3xl p-8 mb-8 border border-brand-100 animate-in slide-in-from-top duration-300">
                     <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <Plus className="w-5 h-5 text-brand-600" />
-                        Add New Product
+                        {editingId ? <Edit2 className="w-5 h-5 text-brand-600" /> : <Plus className="w-5 h-5 text-brand-600" />}
+                        {editingId ? 'Edit Product' : 'Add New Product'}
                     </h3>
                     <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
@@ -315,7 +346,7 @@ const CategoryDetail = () => {
                         <div className="md:col-span-2 flex justify-end gap-4 mt-2">
                             <button
                                 type="button"
-                                onClick={() => setIsAdding(false)}
+                                onClick={() => { setIsAdding(false); setEditingId(null); setNewProduct({ enName: '', thName: '', imageUrl: '', pdfUrl: '' }); }}
                                 className="px-6 py-3 font-bold text-slate-500 hover:text-slate-800"
                             >
                                 Cancel
@@ -325,7 +356,7 @@ const CategoryDetail = () => {
                                 disabled={uploading || pdfUploading}
                                 className="bg-brand-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-500/20 transition-all active:scale-95 disabled:bg-slate-300"
                             >
-                                Save Product
+                                {uploading || pdfUploading ? 'Uploading...' : editingId ? 'Update Product' : 'Save Product'}
                             </button>
                         </div>
                     </form>
@@ -348,7 +379,7 @@ const CategoryDetail = () => {
                         <SortableContext items={data.products.map(p => p.id)} strategy={verticalListSortingStrategy}>
                             <div className="grid grid-cols-1 gap-4">
                                 {data.products.map(product => (
-                                    <SortableProductRow key={product.id} product={product} onDelete={handleDeleteProduct} />
+                                    <SortableProductRow key={product.id} product={product} onDelete={handleDeleteProduct} onEdit={handleEditProduct} />
                                 ))}
                             </div>
                         </SortableContext>

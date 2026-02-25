@@ -86,22 +86,23 @@ export const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu */}
-                {isOpen && (
-                    <div className="md:hidden py-4 space-y-2">
+                {/* Mobile Menu */}
+                <div className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-96 opacity-100 pb-8' : 'max-h-0 opacity-0 pb-0'}`}>
+                    <div className="space-y-2 pt-4 border-t border-slate-50">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.path}
                                 to={link.path}
-                                className={`block px-4 py-2 rounded transition-colors ${isActive(link.path)
-                                    ? 'text-brand-700 font-bold bg-brand-50'
-                                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50'
+                                className={`block px-5 py-4 rounded-2xl transition-all duration-300 ${isActive(link.path)
+                                    ? 'text-brand-700 font-black bg-brand-50 translate-x-2'
+                                    : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50 font-bold'
                                     }`}
                             >
                                 <Text en={link.en} th={link.th} />
                             </Link>
                         ))}
                     </div>
-                )}
+                </div>
             </div>
         </nav>
     );

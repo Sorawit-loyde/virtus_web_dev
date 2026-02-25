@@ -66,7 +66,23 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|gif|pdf/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (extname && mimetype) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only images (jpg, jpeg, png, gif) and PDF files are allowed!'));
+        }
+    }
+});
 
 // Upload Endpoint
 /**
@@ -96,7 +112,9 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.headers['x-forwarded-host'] || req.get('host');
+    const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
 });
 
@@ -348,6 +366,53 @@ app.post('/api/products', async (req, res) => {
 /**
  * @swagger
  * /api/products/{id}:
+ *   put:
+ *     summary: Update a product
+ *     tags:
+ *       - Products
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enName:
+ *                 type: string
+ *               thName:
+ *                 type: string
+ *               imageUrl:
+ *                 type: string
+ *               pdfUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ */
+app.put('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const { enName, thName, imageUrl, pdfUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'UPDATE products SET en_name = $1, th_name = $2, image_url = $3, pdf_url = $4 WHERE id = $5 RETURNING *',
+            [enName, thName, imageUrl, pdfUrl, id]
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).json({ error: 'Failed to update product' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/products/{id}:
  *   delete:
  *     summary: Delete a product
  *     tags:
@@ -437,6 +502,51 @@ app.post('/api/catalogues', async (req, res) => {
     } catch (err) {
         console.error('Error adding catalogue:', err);
         res.status(500).json({ error: 'Failed to add catalogue' });
+    }
+});
+
+/**
+ * @swagger
+ * /api/catalogues/{id}:
+ *   put:
+ *     summary: Update a catalogue
+ *     tags:
+ *       - Catalogues
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               enTitle:
+ *                 type: string
+ *               thTitle:
+ *                 type: string
+ *               pdfUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Catalogue updated successfully
+ */
+app.put('/api/catalogues/:id', async (req, res) => {
+    const { id } = req.params;
+    const { enTitle, thTitle, pdfUrl } = req.body;
+    try {
+        const result = await pool.query(
+            'UPDATE catalogues SET en_title = $1, th_title = $2, pdf_url = $3 WHERE id = $4 RETURNING *',
+            [enTitle, thTitle, pdfUrl, id]
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error updating catalogue:', err);
+        res.status(500).json({ error: 'Failed to update catalogue' });
     }
 });
 

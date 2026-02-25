@@ -13,7 +13,7 @@ export const CategoryProductsPage = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`http://localhost:5000/api/products/${categoryId}`);
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${categoryId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -48,7 +48,7 @@ export const CategoryProductsPage = () => {
                 </h2>
                 <Link to="/products" className="text-brand-600 font-bold hover:underline flex items-center gap-2 justify-center mt-4">
                     <ArrowLeft className="w-4 h-4" />
-                    Back to Products
+                    <Text en="Back to Products" th="กลับหน้าหมวดหมู่สินค้า" />
                 </Link>
             </div>
         );
@@ -132,7 +132,7 @@ export const CategoryProductsPage = () => {
                                 {/* Content */}
                                 <div className="p-8 flex flex-col flex-grow">
                                     <span className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-brand-500 mb-4">
-                                        Engineering Part
+                                        <Text en="Engineering Part" th="ชิ้นส่วนวิศวกรรม" />
                                     </span>
                                     <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-600 transition-colors leading-tight mb-8 flex-grow uppercase tracking-tight">
                                         <Text en={product.enName} th={product.thName} />
@@ -152,7 +152,9 @@ export const CategoryProductsPage = () => {
                                         ) : (
                                             <div className="w-full py-4 rounded-2xl border border-dashed border-slate-200 flex items-center justify-center gap-3 opacity-60 bg-slate-50">
                                                 <FileText className="w-4 h-4 text-slate-300" />
-                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Spec Pending</span>
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                    <Text en="Spec Pending" th="กำลังอัปเดตข้อมูล" />
+                                                </span>
                                             </div>
                                         )}
                                     </div>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Facebook } from 'lucide-react';
+import { Text } from '../common/Text';
 
 export const Footer = () => {
     return (
@@ -15,31 +16,33 @@ export const Footer = () => {
                         <div className="flex items-center gap-2">
                             <img src="/assets/images/Logo-virtus.png" alt="VIRTUS" className="h-12 w-auto object-contain brightness-0 invert" />
                         </div>
-                        <p className="text-sm leading-6 text-slate-500 font-medium h-12" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
+                        <p className="text-base leading-relaxed text-slate-500 font-medium" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
                             Premium manufacturer and distributor of mechanical engineering parts and industrial machinery spares since 2018.
                         </p>
-                        <div className="pt-8 mt-auto text-xs text-slate-600 font-bold uppercase tracking-widest border-t border-slate-800">
-                            &copy; 2024 VIRTUS CO., LTD.<br />
+                        <div className="pt-8 mt-auto text-sm text-slate-600 font-bold uppercase tracking-widest border-t border-slate-800">
+                            &copy; {new Date().getFullYear()} VIRTUS CO., LTD.<br />
                             ALL RIGHTS RESERVED
                         </div>
                     </div>
 
                     {/* Column 2: Quick Links */}
                     <div className="flex flex-col gap-6">
-                        <h4 className="text-white font-black text-xs uppercase tracking-[0.3em] mb-4">Explore</h4>
+                        <h4 className="text-white font-black text-sm uppercase tracking-[0.3em] mb-6">
+                            Explore
+                        </h4>
                         <ul className="grid grid-cols-1 gap-4">
                             {[
-                                { name: 'Home', path: '/' },
-                                { name: 'About Us', path: '/about' },
-                                { name: 'Products', path: '/products' },
-                                { name: 'Catalogue', path: '/catalogues' },
-                                { name: 'Join Us', path: '/join' },
-                                { name: 'Contact Us', path: '/contact' }
+                                { nameEn: 'Home', nameTh: 'หน้าหลัก', path: '/' },
+                                { nameEn: 'Products', nameTh: 'สินค้า', path: '/products' },
+                                { nameEn: 'Catalogue', nameTh: 'แคตตาล็อก', path: '/catalogues' },
+                                { nameEn: 'About Us', nameTh: 'เกี่ยวกับเรา', path: '/about' },
+                                { nameEn: 'Join Us', nameTh: 'ร่วมงานกับเรา', path: '/join' },
+                                { nameEn: 'Contact Us', nameTh: 'ติดต่อเรา', path: '/contact' }
                             ].map((link) => (
                                 <li key={link.path}>
-                                    <Link to={link.path} className="text-slate-500 hover:text-white transition-all duration-300 font-black text-xs uppercase tracking-widest flex items-center gap-3 group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-800 group-hover:bg-brand-500 group-hover:scale-125 transition-all"></span>
-                                        {link.name}
+                                    <Link to={link.path} className="text-slate-500 hover:text-white transition-all duration-300 font-bold text-sm uppercase tracking-widest flex items-center gap-3 group">
+                                        <span className="w-2 h-2 rounded-full bg-slate-800 group-hover:bg-brand-500 group-hover:scale-125 transition-all"></span>
+                                        {link.nameEn}
                                     </Link>
                                 </li>
                             ))}
@@ -48,17 +51,21 @@ export const Footer = () => {
 
                     {/* Column 3: Contact & Branches */}
                     <div className="flex flex-col gap-6 text-sm">
-                        <h4 className="text-white font-black text-xs uppercase tracking-[0.3em] mb-4 text-center sm:text-left">Our Network</h4>
+                        <h4 className="text-white font-black text-sm uppercase tracking-[0.3em] mb-6 text-center sm:text-left">
+                            Our Network
+                        </h4>
                         <div className="space-y-6">
                             {[
-                                { name: 'Dao Khanong Office', tel: '0 2876 2727' },
-                                { name: 'Khlong Thom Branch', tel: '0 2621 2790-3' },
-                                { name: 'Phet Kasem Branch', tel: '0 2420 3494-5' },
-                                { name: 'Chonburi Branch', tel: '0 3814 8037-9' }
+                                { nameEn: 'Dao Khanong Office', nameTh: 'สำนักงานดาวคะนอง', tel: '0 2876 2727' },
+                                { nameEn: 'Khlong Thom Branch', nameTh: 'สาขาคลองถม', tel: '0 2621 2790-3' },
+                                { nameEn: 'Phet Kasem Branch', nameTh: 'สาขาเพชรเกษม', tel: '0 2420 3494-5' },
+                                { nameEn: 'Chonburi Branch', nameTh: 'สาขาชลบุรี', tel: '0 3814 8037-9' }
                             ].map((branch) => (
-                                <div key={branch.name} className="flex flex-col gap-1 border-l-2 border-slate-800 pl-4 hover:border-brand-600 transition-colors h-[42px] justify-center">
-                                    <p className="text-slate-300 font-black uppercase text-[10px] tracking-widest leading-tight" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>{branch.name}</p>
-                                    <p className="text-slate-500 font-bold font-mono text-xs leading-tight" style={{ fontFamily: '"Courier New", Courier, monospace' }}>{branch.tel}</p>
+                                <div key={branch.nameEn} className="flex flex-col gap-1 border-l-2 border-slate-800 pl-4 hover:border-brand-600 transition-colors h-[42px] justify-center">
+                                    <p className="text-slate-300 font-black uppercase text-xs tracking-widest leading-tight" style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}>
+                                        {branch.nameEn}
+                                    </p>
+                                    <p className="text-slate-500 font-bold font-mono text-sm leading-tight" style={{ fontFamily: '"Courier New", Courier, monospace' }}>{branch.tel}</p>
                                 </div>
                             ))}
                         </div>
@@ -67,8 +74,8 @@ export const Footer = () => {
                     {/* Column 4: Facebook Feed */}
                     <div className="flex flex-col items-center sm:items-start">
                         <div className="w-full max-w-[360px] flex flex-col gap-4">
-                            <h4 className="text-white font-black text-xs uppercase tracking-[0.3em] flex items-center gap-3">
-                                <Facebook className="w-4 h-4 text-brand-500" />
+                            <h4 className="text-white font-black text-sm uppercase tracking-[0.3em] flex items-center gap-3 mb-2">
+                                <Facebook className="w-5 h-5 text-brand-500" />
                                 <span className="pt-0.5">Live Updates</span>
                             </h4>
                             <div className="rounded-[1.5rem] bg-white shadow-xl border border-slate-100 overflow-hidden h-[450px] w-full">
@@ -90,7 +97,7 @@ export const Footer = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-800/50">
-                    <div className="flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
+                    <div className="flex items-center gap-12 text-xs font-black uppercase tracking-[0.2em] text-slate-600">
                         <div className="flex items-center gap-2">
                             <div className="w-1 h-1 bg-brand-500 rounded-full" />
                             <span>Integrity</span>

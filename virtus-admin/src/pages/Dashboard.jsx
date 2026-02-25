@@ -6,7 +6,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const SortableCategoryCard = React.memo(({ cat, onDelete }) => {
+const SortableCategoryCard = React.memo(({ cat, onDelete, onEdit }) => {
     const {
         attributes,
         listeners,
@@ -47,7 +47,10 @@ const SortableCategoryCard = React.memo(({ cat, onDelete }) => {
                     </button>
                 </div>
                 <div className="absolute top-2 right-2 flex gap-1">
-                    <button className="p-1.5 bg-white/90 backdrop-blur rounded-md text-slate-600 hover:text-brand-600 hover:scale-110 active:scale-90 transition-all shadow-sm">
+                    <button
+                        onClick={() => onEdit(cat)}
+                        className="p-1.5 bg-white/90 backdrop-blur rounded-md text-slate-600 hover:text-brand-600 hover:scale-110 active:scale-90 transition-all shadow-sm"
+                    >
                         <Edit2 className="w-4 h-4" />
                     </button>
                     <button
@@ -71,7 +74,7 @@ const SortableCategoryCard = React.memo(({ cat, onDelete }) => {
                         <FolderOpen className="w-4 h-4" />
                     </Link>
                     <a
-                        href={`http://localhost:5173/products/${cat.id}`}
+                        href={`${import.meta.env.VITE_WEBSITE_URL}/products/${cat.id}`}
                         target="_blank"
                         rel="noreferrer"
                         className="p-2 text-slate-400 hover:text-brand-500 hover:bg-brand-50 rounded-lg transition-all"
@@ -89,6 +92,7 @@ const Dashboard = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
         id: '',
@@ -142,15 +146,31 @@ const Dashboard = () => {
         }
     };
 
+    const handleEdit = (cat) => {
+        setFormData({
+            id: cat.id,
+            enTitle: cat.enTitle,
+            thTitle: cat.thTitle,
+            imageUrl: cat.imageUrl
+        });
+        setEditingId(cat.id);
+        setIsAdding(true);
+    };
+
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            await addCategory(formData);
+            if (editingId) {
+                await updateCategory(editingId, formData);
+            } else {
+                await addCategory(formData);
+            }
             setIsAdding(false);
+            setEditingId(null);
             setFormData({ id: '', enTitle: '', thTitle: '', imageUrl: '' });
             fetchCategories();
         } catch (err) {
-            alert('Failed to add category. Check if ID is unique.');
+            alert(editingId ? 'Failed to update category.' : 'Failed to add category. Check if ID is unique.');
         }
     };
 
@@ -199,7 +219,11 @@ const Dashboard = () => {
                         <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
                     </button>
                     <button
-                        onClick={() => setIsAdding(true)}
+                        onClick={() => {
+                            setEditingId(null);
+                            setFormData({ id: '', enTitle: '', thTitle: '', imageUrl: '' });
+                            setIsAdding(true);
+                        }}
                         className="bg-brand-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-brand-700 transition-all shadow-sm"
                     >
                         <Plus className="w-5 h-5" />
@@ -220,8 +244,8 @@ const Dashboard = () => {
                 <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in duration-200">
                         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-slate-900">Create New Category</h2>
-                            <button onClick={() => setIsAdding(false)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-all">
+                            <h2 className="text-xl font-bold text-slate-900">{editingId ? 'Edit Category' : 'Create New Category'}</h2>
+                            <button onClick={() => { setIsAdding(false); setEditingId(null); }} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-all">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
@@ -230,7 +254,8 @@ const Dashboard = () => {
                                 <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tight text-[10px]">ID (Slug - e.g. bearings)</label>
                                 <input
                                     required
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-500 transition-all outline-none"
+                                    disabled={!!editingId}
+                                    className={`w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-500 transition-all outline-none ${editingId ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     value={formData.id}
                                     onChange={e => setFormData({ ...formData, id: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
                                     placeholder="bearings"
@@ -296,7 +321,7 @@ const Dashboard = () => {
                             <div className="pt-4 flex gap-3">
                                 <button
                                     type="button"
-                                    onClick={() => setIsAdding(false)}
+                                    onClick={() => { setIsAdding(false); setEditingId(null); }}
                                     className="flex-grow px-4 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors"
                                 >
                                     Cancel
@@ -306,7 +331,7 @@ const Dashboard = () => {
                                     disabled={uploading}
                                     className="flex-grow bg-brand-600 text-white px-4 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all shadow-md disabled:bg-slate-300"
                                 >
-                                    {uploading ? 'Uploading...' : 'Save Category'}
+                                    {uploading ? 'Uploading...' : editingId ? 'Update Category' : 'Save Category'}
                                 </button>
                             </div>
                         </form>
@@ -318,7 +343,7 @@ const Dashboard = () => {
                 <SortableContext items={categories.map(cat => cat.id)} strategy={rectSortingStrategy}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {categories.map((cat) => (
-                            <SortableCategoryCard key={cat.id} cat={cat} onDelete={handleDelete} />
+                            <SortableCategoryCard key={cat.id} cat={cat} onDelete={handleDelete} onEdit={handleEdit} />
                         ))}
                     </div>
                 </SortableContext>

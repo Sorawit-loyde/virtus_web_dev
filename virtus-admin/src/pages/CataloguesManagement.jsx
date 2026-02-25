@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, FileText, Download, Upload, X, Loader2, BookOpen, Package, AlertCircle, GripVertical } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, FileText, Download, Upload, X, Loader2, BookOpen, Package, AlertCircle, GripVertical } from 'lucide-react';
 import { getCatalogues, addCatalogue, deleteCatalogue, uploadFile, reorderItems } from '../services/api';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -83,7 +83,7 @@ const AdminPdfPreview = memo(({ url }) => {
     );
 });
 
-const SortableCatalogueCard = React.memo(({ cat, onDelete }) => {
+const SortableCatalogueCard = React.memo(({ cat, onDelete, onEdit }) => {
     const {
         attributes,
         listeners,
@@ -116,12 +116,20 @@ const SortableCatalogueCard = React.memo(({ cat, onDelete }) => {
                 >
                     <GripVertical className="w-5 h-5" />
                 </button>
-                <button
-                    onClick={() => onDelete(cat.id)}
-                    className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur rounded-xl text-slate-400 hover:text-red-500 hover:scale-110 active:scale-90 shadow-sm opacity-0 group-hover:opacity-100 transition-all z-20"
-                >
-                    <Trash2 className="w-5 h-5" />
-                </button>
+                <div className="absolute top-4 right-4 flex gap-1 z-20 opacity-0 group-hover:opacity-100 transition-all">
+                    <button
+                        onClick={() => onEdit(cat)}
+                        className="p-2 bg-white/90 backdrop-blur rounded-xl text-slate-400 hover:text-brand-600 hover:scale-110 active:scale-90 shadow-sm"
+                    >
+                        <Edit2 className="w-5 h-5" />
+                    </button>
+                    <button
+                        onClick={() => onDelete(cat.id)}
+                        className="p-2 bg-white/90 backdrop-blur rounded-xl text-slate-400 hover:text-red-500 hover:scale-110 active:scale-90 shadow-sm"
+                    >
+                        <Trash2 className="w-5 h-5" />
+                    </button>
+                </div>
             </div>
             <div className="p-8 pb-0 flex-grow">
                 <h3 className="text-xl font-black text-slate-900 leading-tight mb-2 group-hover:text-brand-600 transition-colors uppercase tracking-tight">{cat.enTitle}</h3>
@@ -146,6 +154,7 @@ const CataloguesManagement = () => {
     const [catalogues, setCatalogues] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState(null);
     const [pdfUploading, setPdfUploading] = useState(false);
     const [formData, setFormData] = useState({
         enTitle: '',
@@ -187,15 +196,30 @@ const CataloguesManagement = () => {
         }
     };
 
+    const handleEdit = (cat) => {
+        setFormData({
+            enTitle: cat.enTitle,
+            thTitle: cat.thTitle,
+            pdfUrl: cat.pdfUrl
+        });
+        setEditingId(cat.id);
+        setIsAdding(true);
+    };
+
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            await addCatalogue(formData);
+            if (editingId) {
+                await updateCatalogue(editingId, formData);
+            } else {
+                await addCatalogue(formData);
+            }
             setIsAdding(false);
+            setEditingId(null);
             setFormData({ enTitle: '', thTitle: '', pdfUrl: '' });
             fetchCatalogues();
         } catch (err) {
-            alert('Failed to add catalogue');
+            alert(editingId ? 'Failed to update catalogue' : 'Failed to add catalogue');
         }
     };
 
@@ -259,7 +283,13 @@ const CataloguesManagement = () => {
                     <span>{catalogues.length} catalogues</span>
                 </div>
                 <button
-                    onClick={() => setIsAdding(!isAdding)}
+                    onClick={() => {
+                        if (isAdding) {
+                            setEditingId(null);
+                            setFormData({ enTitle: '', thTitle: '', pdfUrl: '' });
+                        }
+                        setIsAdding(!isAdding);
+                    }}
                     className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ${isAdding ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-500/20'
                         }`}
                 >
@@ -273,9 +303,9 @@ const CataloguesManagement = () => {
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-brand-50 rounded-2xl">
-                                <FileText className="w-6 h-6 text-brand-600" />
+                                {editingId ? <Edit2 className="w-6 h-6 text-brand-600" /> : <FileText className="w-6 h-6 text-brand-600" />}
                             </div>
-                            <h2 className="text-2xl font-black text-slate-900">New Catalogue</h2>
+                            <h2 className="text-2xl font-black text-slate-900">{editingId ? 'Edit Catalogue' : 'New Catalogue'}</h2>
                         </div>
                         <button onClick={() => setIsAdding(false)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-all">
                             <X className="w-8 h-8" />
@@ -319,8 +349,8 @@ const CataloguesManagement = () => {
                                 type="button"
                                 onClick={() => pdfInputRef.current?.click()}
                                 className={`w-full p-6 border-2 border-dashed rounded-2xl transition-all ${formData.pdfUrl
-                                        ? 'border-brand-300 bg-brand-50 hover:bg-brand-100'
-                                        : 'border-slate-200 hover:border-brand-300 hover:bg-slate-50'
+                                    ? 'border-brand-300 bg-brand-50 hover:bg-brand-100'
+                                    : 'border-slate-200 hover:border-brand-300 hover:bg-slate-50'
                                     }`}
                                 disabled={pdfUploading}
                             >
@@ -343,8 +373,10 @@ const CataloguesManagement = () => {
                         </div>
 
                         <div className="flex gap-4 pt-4">
-                            <button type="button" onClick={() => setIsAdding(false)} className="flex-grow p-4 bg-slate-100 text-slate-500 font-bold rounded-2xl hover:bg-slate-200 hover:text-slate-700 transition-all">Cancel</button>
-                            <button type="submit" disabled={!formData.pdfUrl || pdfUploading} className="flex-[2] p-4 bg-brand-600 text-white font-black rounded-2xl hover:bg-brand-700 hover:shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] active:scale-95 transition-all disabled:opacity-50 shadow-xl">Publish Catalogue</button>
+                            <button type="button" onClick={() => { setIsAdding(false); setEditingId(null); setFormData({ enTitle: '', thTitle: '', pdfUrl: '' }); }} className="p-4 bg-slate-100 text-slate-500 font-bold rounded-2xl hover:bg-slate-200 hover:text-slate-700 transition-all">Cancel</button>
+                            <button type="submit" disabled={!formData.pdfUrl || pdfUploading} className="flex-[2] p-4 bg-brand-600 text-white font-black rounded-2xl hover:bg-brand-700 hover:shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] active:scale-95 transition-all disabled:opacity-50 shadow-xl">
+                                {pdfUploading ? 'Uploading...' : editingId ? 'Update Catalogue' : 'Publish Catalogue'}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -364,7 +396,7 @@ const CataloguesManagement = () => {
                     <SortableContext items={catalogues.map(c => c.id)} strategy={rectSortingStrategy}>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {catalogues.map((cat) => (
-                                <SortableCatalogueCard key={cat.id} cat={cat} onDelete={handleDelete} />
+                                <SortableCatalogueCard key={cat.id} cat={cat} onDelete={handleDelete} onEdit={handleEdit} />
                             ))}
                         </div>
                     </SortableContext>

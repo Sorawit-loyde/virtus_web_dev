@@ -11,7 +11,7 @@ export const Products = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/categories');
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch categories');
                 }
@@ -98,9 +98,9 @@ export const Products = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
                     {categories.map((cat) => (
-                        <a
+                        <Link
                             key={cat.id}
-                            href={`/products/${cat.id}`}
+                            to={`/products/${cat.id}`}
                             className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] transition-all duration-700 border border-slate-100 flex flex-col h-full transform hover:-translate-y-2"
                         >
                             {/* Category Image */}
@@ -128,11 +128,11 @@ export const Products = () => {
                                 </div>
 
                                 <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between text-slate-400 font-black text-[10px] uppercase tracking-widest">
-                                    <span>Explore Range</span>
+                                    <span><Text en="Explore Range" th="สำรวจสินค้า" /></span>
                                     <ArrowRight className="w-4 h-4 text-brand-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
                                 </div>
                             </div>
-                        </a>
+                        </Link>
                     ))}
                 </div>
             </div>

@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment variables (contain secrets!)
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Uploads (user-generated content)
+virtus-backend/uploads/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
