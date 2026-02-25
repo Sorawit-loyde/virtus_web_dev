@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit2, Trash2, Package, Tag, Layers, ImageIcon, X, Upload, FileText, GripVertical } from 'lucide-react';
 import { getProductsByCategory, addProduct, deleteProduct, uploadFile, reorderItems } from '../services/api';
+import { getAssetUrl } from '../utils/url';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -39,7 +40,7 @@ const SortableProductRow = React.memo(({ product, onDelete, onEdit }) => {
                     <GripVertical className="w-5 h-5" />
                 </button>
                 <div className="w-16 h-16 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
-                    <img src={product.imageUrl} alt={product.enName} className="w-full h-full object-cover" />
+                    <img src={getAssetUrl(product.imageUrl)} alt={product.enName} className="w-full h-full object-cover" />
                 </div>
                 <div>
                     <div className="flex items-center gap-2">
@@ -212,7 +213,7 @@ const CategoryDetail = () => {
 
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm mb-8 flex flex-col md:flex-row gap-8 items-start">
                 <div className="w-full md:w-48 aspect-video rounded-2xl overflow-hidden bg-slate-50">
-                    <img src={data.category.imageUrl} alt={data.category.enTitle} className="w-full h-full object-cover" />
+                    <img src={getAssetUrl(data.category.imageUrl)} alt={data.category.enTitle} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-grow">
                     <div className="flex items-center gap-3 mb-2">
@@ -277,7 +278,7 @@ const CategoryDetail = () => {
                                     className="w-20 h-20 bg-white rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50 cursor-pointer overflow-hidden transition-all group flex-shrink-0"
                                 >
                                     {newProduct.imageUrl ? (
-                                        <img src={newProduct.imageUrl} className="w-full h-full object-cover" />
+                                        <img src={getAssetUrl(newProduct.imageUrl)} className="w-full h-full object-cover" />
                                     ) : (
                                         <>
                                             <Upload className={`w-5 h-5 ${uploading ? 'animate-bounce text-brand-600' : 'text-slate-400'}`} />

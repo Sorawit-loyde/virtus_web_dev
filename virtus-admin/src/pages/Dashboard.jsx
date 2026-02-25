@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit2, Trash2, Package, FolderOpen, ExternalLink, RefreshCw, X, Image as ImageIcon, Upload, BookOpen, GripVertical } from 'lucide-react';
 import { getCategories, deleteCategory, addCategory, uploadFile, reorderItems } from '../services/api';
+import { getAssetUrl } from '../utils/url';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -32,7 +33,7 @@ const SortableCategoryCard = React.memo(({ cat, onDelete, onEdit }) => {
         >
             <div className="aspect-video bg-slate-50 relative overflow-hidden">
                 <img
-                    src={cat.imageUrl}
+                    src={getAssetUrl(cat.imageUrl)}
                     alt={cat.enTitle}
                     className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
                 />
@@ -289,7 +290,7 @@ const Dashboard = () => {
                                         className="w-24 h-24 bg-slate-100 rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50 cursor-pointer overflow-hidden transition-all group"
                                     >
                                         {formData.imageUrl ? (
-                                            <img src={formData.imageUrl} className="w-full h-full object-cover" />
+                                            <img src={getAssetUrl(formData.imageUrl)} className="w-full h-full object-cover" />
                                         ) : (
                                             <>
                                                 <Upload className={`w-6 h-6 ${uploading ? 'animate-bounce text-brand-600' : 'text-slate-400'}`} />
